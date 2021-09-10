@@ -1,11 +1,11 @@
 <template>
   <div class="list">
-    <mt-header title="车辆评估" fixed>
-      <router-link to="/" slot="left">
-        <mt-button icon="back">返回</mt-button>
-      </router-link>
-      <mt-button icon="more" slot="right"></mt-button>
-    </mt-header>
+    <van-nav-bar
+      title="车辆评估"
+      left-text="返回"
+      left-arrow
+      @click-left="onClickLeft"
+    />
     <div class="mainContain">
         <div class="firstSection">
             <div class="secTitle">车型信息</div>
@@ -36,13 +36,13 @@
         </div>
     </div>
     <div class="searchBox">
-      <mt-button  type="primary" size="small" @click="valueSearch()">估值查询</mt-button>
-      <mt-button  type="primary" size="small" @click="carSearch()">车况历史</mt-button>
-      <mt-button  type="primary" size="small" @click="carReport()">车型上报</mt-button>
+      <van-button  type="primary" size="small" @click="valueSearch()">估值查询</van-button>
+      <van-button  type="primary" size="small" @click="carSearch()">车况历史</van-button>
+      <van-button  type="primary" size="small" @click="carReport()">车型上报</van-button>
     </div>
     <div class="bottomBox">
-      <mt-button class="bottom-btn" type="default" size="small" @click="codeSearch()">车架号查询</mt-button>
-      <mt-button class="bottom-btn" type="default" size="small" @click="historySearch()">查询历史</mt-button>
+      <van-button class="bottom-btn"  type="default" @click="codeSearch()">车架号查询</van-button>
+      <van-button class="bottom-btn"  type="default" @click="historySearch()">查询历史</van-button>
     </div>
   </div>
 </template>
@@ -85,7 +85,7 @@ export default {
   padding: 0 .133rem 0 .133rem;
 }
 .mainContain{
-    margin-top: 1.1rem;
+    margin-top: .3rem;
     .secTitle{
         height: 1.1rem;
         line-height: 1.1rem;

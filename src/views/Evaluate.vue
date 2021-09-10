@@ -75,9 +75,6 @@
     </div>
 
     <div class="bottomBox">
-      <!-- <mt-button class="bottom-btn" type="default" size="small" >车架号查询</mt-button>
-      <mt-button class="bottom-btn" type="default" size="small" @click="historySearch()">查询历史</mt-button> -->
-      
       <van-button class="bottom-btn"  type="default" @click="codeSearch()">车架号查询</van-button>
       <van-button class="bottom-btn"  type="default" @click="historySearch()">查询历史</van-button>
     </div>
@@ -100,10 +97,10 @@ export default {
   methods:{
     onSubmit(){
       console.log("kkkk")
-            request({
-      url: 'API_Evaluate_OcrDiscern?driveData=1&userId=1012',
-      method: "get"
-    });
+        request({
+          url: 'API_Evaluate_OcrDiscern?driveData=1&userId=1012',
+          method: "get"
+        });
       
 
     },
@@ -147,7 +144,7 @@ export default {
 
 }
 .mainContent{
-  margin-top: 1.5rem;
+  margin-top: .4rem;
   padding: .266667rem /* 20px -> .266667rem */ .133333rem ;
   width: 100%;
   .rowSection{

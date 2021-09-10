@@ -1,20 +1,22 @@
 <template>
   <div class="list">
-    <mt-header title="车辆评估" fixed>
-      <router-link to="/" slot="left">
-        <mt-button icon="back">返回</mt-button>
-      </router-link>
-      <mt-button icon="more" slot="right"></mt-button>
-    </mt-header>
+    <van-nav-bar
+      title="车辆评估"
+      left-text="返回"
+      left-arrow
+      @click-left="onClickLeft"
+    />
     <div class="historyTitle">查询历史</div>
-    <div class="inputBox">
+    <van-field
+      class = "searchBox"
+      v-model="value"
+      label=""
+      left-icon="search"
+      placeholder="请输入关键字"
+    />
+    <!-- <div class="inputBox">
       <input placeholder="请输入关键字查询" v-model="searchValue">
-      <!-- <div class="btnSearch">
-        <mt-button class="search-btn" type="danger" size="small" @click="handleSearch()">查询</mt-button>
-      </div> -->
-      <!-- <mt-search v-model="searchValue" cancel-text="取消" placeholder="请输入关键字查询">
-      </mt-search> -->
-    </div>
+    </div> -->
     <div class="mainContent">
       <div class="historySection">
         <div class="rowDetail">
@@ -37,10 +39,54 @@
             <div class="rowValue">2017款胜达 2.0T 自动 两驱 智能型 7座 新款低油耗</div>
         </div>
       </div>
+
+      <div class="historySection">
+        <div class="rowDetail">
+            <div class="rowTitle">车架号2</div>
+            <div class="rowValue">123344556777</div>
+        </div>
+          <div class="rowDetail">
+            <div class="rowTitle">车型</div>
+            <div class="rowValue">2017款胜达 2.0T 自动 两驱 智能型 7座 新款低油耗</div>
+        </div>
+      </div>
+      <div class="historySection">
+        <div class="rowDetail">
+            <div class="rowTitle">车架号2</div>
+            <div class="rowValue">123344556777</div>
+        </div>
+          <div class="rowDetail">
+            <div class="rowTitle">车型</div>
+            <div class="rowValue">2017款胜达 2.0T 自动 两驱 智能型 7座 新款低油耗</div>
+        </div>
+      </div>
+      <div class="historySection">
+        <div class="rowDetail">
+            <div class="rowTitle">车架号2</div>
+            <div class="rowValue">123344556777</div>
+        </div>
+          <div class="rowDetail">
+            <div class="rowTitle">车型</div>
+            <div class="rowValue">2017款胜达 2.0T 自动 两驱 智能型 7座 新款低油耗</div>
+        </div>
+      </div>
+      <div class="historySection">
+        <div class="rowDetail">
+            <div class="rowTitle">车架号2</div>
+            <div class="rowValue">123344556777</div>
+        </div>
+          <div class="rowDetail">
+            <div class="rowTitle">车型</div>
+            <div class="rowValue">2017款胜达 2.0T 自动 两驱 智能型 7座 新款低油耗</div>
+        </div>
+      </div>
+
+
+
     </div>
     <div class="bottomBox">
-      <mt-button class="bottom-btn" type="default" size="small" @click="codeSearch()">车架号查询</mt-button>
-      <mt-button class="bottom-btn" type="default" size="small" @click="historySearch()">查询历史</mt-button>
+      <van-button class="bottom-btn"  type="default" @click="codeSearch()">车架号查询</van-button>
+      <van-button class="bottom-btn"  type="default" @click="historySearch()">查询历史</van-button>
     </div>
   </div>
 </template>
@@ -52,6 +98,7 @@ export default {
     }
   },
   methods:{
+    onClickLeft(){},
     handleSearch(){
       console.log('点击查询,跳转详情页面');
 
@@ -66,16 +113,23 @@ export default {
 }
 </script>
 <style scoped lang="scss" >
-.search-btn{
-  background-color: #D0C378;
-}
 .bottom-btn{
   background-color: #91C5C7;
   width:4rem;
 }
+.list{
+  height: 100vh;
+  overflow:hidden;
+  display: flex;
+  flex-direction: column;
+}
 .mainContent{
-  position: absolute;
-  top: 3.5rem;
+  // position: absolute;
+  // top: 3.5rem;
+  flex: 1;
+  overflow: scroll;
+  margin-top: .266667rem;
+  padding-bottom: 1.2rem;
   width: 100%;
   .historySection{
     width: 90%;
@@ -106,12 +160,24 @@ export default {
   height: 1rem;
   line-height: 1rem;
   text-align: center;
-  position: fixed;
-  top:1.1rem;
+  // position: fixed;
+  // top:1.3rem;
   width:100%;
   font-size: .4rem;
   font-weight: bold;
   letter-spacing: .1rem;
+}
+.searchBox{
+  border-radius: .133333rem;
+  border: 1px solid #297CE4;
+  padding: 0;
+  width: 90%;
+  margin: auto;
+  // position: fixed;
+  // top:2.3rem;
+  // left:5%;
+  height: 1rem;
+  line-height: 1rem;
 }
 .inputBox{
   position: fixed;

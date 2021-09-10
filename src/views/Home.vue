@@ -1,19 +1,22 @@
 <template>
   <div class="list">
-    <mt-header title="车辆评估" fixed>
-      <router-link to="/" slot="left">
-        <mt-button icon="back">返回</mt-button>
-      </router-link>
-    </mt-header>
+    <van-nav-bar
+      title="车辆评估"
+      left-text="返回"
+      left-arrow
+      @click-left="onClickLeft"
+    />
     <div class="inputBox">
       <input placeholder="请输入行驶证上的17位车架号" v-model="carCode">
       <div class="btnSearch">
-        <mt-button class="search-btn" type="danger" size="small" @click="handleSearch()">查询</mt-button>
+        <van-button class="search-btn" type="primary"  @click="handleSearch()">查询</van-button>
       </div>
     </div>
     <div class="bottomBox">
-      <mt-button class="bottom-btn" type="default" size="small" @click="codeSearch()">车架号查询</mt-button>
-      <mt-button class="bottom-btn" type="default" size="small" @click="historySearch()">查询历史</mt-button>
+      <!-- <mt-button class="bottom-btn" type="default" size="small" @click="codeSearch()">车架号查询</mt-button>
+      <mt-button class="bottom-btn" type="default" size="small" @click="historySearch()">查询历史</mt-button> -->
+      <van-button class="bottom-btn"  type="default" @click="codeSearch()">车架号查询</van-button>
+      <van-button class="bottom-btn"  type="default" @click="historySearch()">查询历史</van-button>
     </div>
   </div>
 </template>
@@ -41,6 +44,7 @@ export default {
 <style scoped lang="scss" >
 .search-btn{
   background-color: #D0C378;
+  height: 100%;
 }
 .bottom-btn{
   background-color: #91C5C7;
@@ -48,7 +52,7 @@ export default {
 }
 .inputBox{
   position: fixed;
-  top:1.1rem;
+  top:1.3rem;
   border:.013rem solid #D0C378;
   width:100%;
   height: 1rem;
