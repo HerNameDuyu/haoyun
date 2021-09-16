@@ -39,6 +39,7 @@ const routes = [
 ];
 
 const router = new VueRouter({
+  mode:'history',
   routes,
 });
 router.beforeEach((to, from, next) => {
@@ -48,4 +49,8 @@ router.beforeEach((to, from, next) => {
   }
   next()
 })
+router.install = (Vue)=>{
+  Vue.component(router,router)
+}
+
 export default router;

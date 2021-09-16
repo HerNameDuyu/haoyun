@@ -17,7 +17,8 @@ const codeMessage = {
   504: '网关超时。'
 }
 // const baseURL = process.env.VUE_APP_NODE_ENV == 'development' ? '/api' : process.env.VUE_APP_BASE_API
-const baseURL =  process.env.VUE_APP_BASE_API
+// const baseURL =  process.env.VUE_APP_BASE_API
+const baseURL =  'api/'
 const instance = axios.create({
   baseURL
 })

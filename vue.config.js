@@ -99,20 +99,27 @@ module.exports = {
   outputDir: "dist",
   assetsDir: 'assets',
   publicPath: './',
-  pages: {
-    index: {
-      entry: './src/main.js',
-      template: path.join(__dirname, 'public/index.html'),
-      filename: 'index.html',
-      cdn: process.env.VUE_APP_NODE_ENV === 'production' && cdn.build || cdn.dev,
-      title: '  '
+
+  lintOnSave: false, // 是否开启编译时是否不符合eslint提示
+  devServer: {
+    host: '0.0.0.0',
+    port: 8080,
+    https: false,
+    hotOnly: false,
+    proxy: {
+      '^/api': {
+        // 测试环境
+        target: 'http://47.111.174.239:8000/FaceView.asmx', 
+        changeOrigin: true, // 是否跨域
+        pathRewrite: {
+          '^/api': '' // 需要rewrite重写的,  // /mock
+        }
+      }
     }
   },
-  lintOnSave: false, // 是否开启编译时是否不符合eslint提示
-  devServer,
   configureWebpack: config => {
-    configureWebpackData.externals = process.env.VUE_APP_NODE_ENV === 'production' && externals || {};
-    if (process.env.VUE_APP_NODE_ENV === 'production' || process.env.VUE_APP_NODE_ENV === 'devproduction') {
+    configureWebpackData.externals = process.env.VUE_APP_NODE_ENV === 'production' ? externals : {};
+    // if (process.env.VUE_APP_NODE_ENV === 'production' || process.env.VUE_APP_NODE_ENV === 'devproduction') {
       config.plugins.push(
         new TerserPlugin({
           terserOptions: {
@@ -127,14 +134,8 @@ module.exports = {
           }
         })
       )
-    }
-    if (process.env.VUE_APP_NODE_ENV === 'production') {
-      configureWebpackData.plugins.push(new CompressionPlugin({
-        test: /\.js$|\.html$|\.css/,
-        threshold: 10240,
-        deleteOriginalAssets: false
-      }))
-    }
+    // }
+
     return configureWebpackData
   },
   chainWebpack: config => {

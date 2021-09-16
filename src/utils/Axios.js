@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { Toast } from 'vant';
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
   201: '新建或修改数据成功。',
@@ -16,15 +17,38 @@ const codeMessage = {
   503: '服务不可用，服务器暂时过载或维护。',
   504: '网关超时。'
 }
-// const baseURL = process.env.VUE_APP_NODE_ENV == 'development' ? '/api' : process.env.VUE_APP_BASE_API
-const baseURL =  process.env.VUE_APP_BASE_API
+const baseURL = process.env.NODE_ENV == 'development' ? '/api' : process.env.VUE_APP_SERVICE_URL;
+const userId = window.localStorage.getItem('vinUserId') || '1012';
 const service = axios.create({
-  baseURL :process.env.VUE_APP_BASE_API
+  baseURL :baseURL
 })
 // 请求拦截器
 service.interceptors.request.use(
     config => {
+      let contentType = ''
+      if (config.method == 'post') {
+        // contentType = 'application/json'
+        // contentType = 'text/json; charset=UTF-8'
+        contentType = 'application/x-www-form-urlencoded; charset=UTF-8'
+      } else {
+        contentType = 'application/x-www-form-urlencoded; charset=UTF-8'
+      }  
+      const header = {
+        // 'X-Requested-With': 'XMLHttpRequest',
+        'Content-Type': contentType,
+      }
+      const head = Object.assign(config.headers,header);
+      config.headers = head
       // do something before request is sent
+      if(config.method == ('post' || 'POST')){
+      //  config.data = Object.assign(config.data,{userId:userId});
+      //  config.data = JSON.stringify(Object.assign(config.data,{userId:userId}));
+      config.data += `&userId=${userId}`
+      }
+      if(config.method == ('get' || 'GET')){
+        config.params = Object.assign(config.params,{userId:userId});
+        // config.headers['Content-Type'] = 'application/json'
+      }
       return config;
     },
     error => {
@@ -40,14 +64,10 @@ service.interceptors.request.use(
       // 正常响应
       const res = response.data;
       // 消息模板配置-云片平台返回有 10000、400 的状态
-      if (Number(res.code) !== 20000 && Number(res.code) !== 10000 && Number(res.code) !== 400) {
-        console.log('reject:', res) // for debug
-        // Message({
-        //   message: res.message || 'Error',
-        //   type: 'error',
-        //   duration: 2 * 1000
-        // })
-        return Promise.reject(res);
+      if (Number(res.status) != 1 ) {
+        console.log('reject:', res.error_msg) // for debug
+        Toast.fail(res.error_msg)
+        return Promise.reject(res.error_msg || 'Error');
       } else {
         return res;
       }
@@ -55,21 +75,15 @@ service.interceptors.request.use(
     error => {
       // 响应异常
       console.log('error:' + error) // for debug
-    //   Message({
-    //       message: error,
-    //       type: 'error',
-    //       duration: 2 * 1000
-    //   })
-  
-      return Promise.reject(error);
+      Toast.fail("系统异常")
+      // return Promise.reject(error);
     }
   );
 
 
-
 //第二种方法
 const instance = axios.create({
-    baseURL :process.env.VUE_APP_BASE_API
+    baseURL : baseURL
   })
 class Request {
   constructor(baseURL) {
@@ -135,7 +149,7 @@ class Request {
   setRequest (method, url, data, scope, file = false) {
     this.interceptors(instance, scope)
     const options = { method, url }
-
+    data.userId = userId;
     let contentType = ''
     if (file) {
       contentType = 'multipart/form-data'
@@ -150,7 +164,6 @@ class Request {
       'Content-Type': contentType,
       // token: store.state.user.token || 1
     }
-
     Object.assign(options, {
       headers,
       [method == 'post' ? 'data' : 'params']: data
@@ -187,11 +200,7 @@ class Request {
     return da
   }
 }
-const obj = new Request(baseURL)
-console.log(obj)
-console.log(service)
-const aa = {
-    name:'duyu'
-}
-console.log(aa)
+const request = new Request(baseURL)
+
+
 export default service

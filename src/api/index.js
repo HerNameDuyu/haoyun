@@ -1,11 +1,124 @@
-// import request from "../utils/Axios.js"
+import request from "../utils/Axios.js"
 // 数据格式
 export default {
-    // 接口测试
-    testapi(data=1,userId=1012) {
-      return this.$http({
-        url: `API_Evaluate_OcrDiscern?driveData=${data}&userId=${{userId}}`,
-        method: "get"
+    // 行驶证ocr识别
+    // ocrDiscern(query) {
+    //   return  request({
+    //     url: `API_Evaluate_OcrDiscern`,
+    //     method: "get",
+    //     params: {...query}
+    //   });
+    // },
+    ocrDiscern(query) {
+      let data = ''
+      for(let i in query){
+        data += `&${i}=${query[i]}`
+      }
+      data = data.slice(1);
+      return  request({
+        url: 'API_Evaluate_OcrDiscern',
+        method: "post",
+        data:data
       });
+      // return request.post('API_Evaluate_OcrDiscern',query)
     },
+    //根据车架号搜索查询
+    matchCar(query){
+      return request({
+        url: `API_Evaluate_VinMatch`,
+        method: "get",
+        params:{...query}
+      })
+    },
+    // matchCar(query){
+    //   return request({
+    //     url: 'API_Evaluate_VinMatch',
+    //     method: "post",
+    //     data:{...query}
+    //   })
+    // },
+    //获取查询历史
+    getHistorySerch(query){
+      return request({
+        url: 'API_Evaluate_QueryHistory',
+        method: "get",
+        params: {...query}
+      })
+    },
+    // getHistorySerch(query){
+    //   return request({
+    //     url: 'API_Evaluate_QueryHistory',
+    //     method: "post",
+    //     data:{...query}
+    //   })
+    // },
+    //获取详情接口
+    getDetais(query){
+      return request({
+        url: `API_Evaluate_VinQuery`,
+        method: "get",
+        params: {...query}
+      })
+    },
+    // getDetais(query){
+    //   return request({
+    //     url: 'API_Evaluate_VinQuery',
+    //     method: "post",
+    //     data:{...query}
+    //   })
+    // },
+    //车型上报
+    carModelReport(query){
+      return request({
+        url: `API_Evaluate_CarModelReport`,
+        method: "get",
+        params:{...query}
+      })
+    },
+    //车况查询
+    generalInfo(query){
+      return request({
+        url: `API_Evaluate_CarGeneralInfo`,
+        method: "get",
+        params:{...query}
+      })
+    },
+    // generalInfo(query){
+    //   return request({
+    //     url: 'API_Evaluate_CarGeneralInfo',
+    //     method: "post",
+    //     data:{...query}
+    //   })
+    // },
+    //车辆评估接口
+    evaluate(query){
+      return request({
+        url: 'API_Evaluate_CarEvaluate',
+        method: "get",
+        params:{...query}
+      })
+    },
+    // evaluate(query){
+    //   return request({
+    //     url: 'API_Evaluate_CarEvaluate',
+    //     method: "post",
+    //     data:{...query}
+    //   })
+    // },
+    //获取省份和城市
+    getCity(query){
+      return request({
+        url: 'API_Evaluate_GetCityInfo',
+        method: "get",
+        params:{...query}
+      })
+    },
+    // getCity(query){
+    //   return request({
+    //     url: 'API_Evaluate_GetCityInfo',
+    //     method: "post",
+    //     data:{...query}
+    //   })
+    // }
+
 }

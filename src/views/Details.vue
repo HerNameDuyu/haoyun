@@ -1,44 +1,109 @@
 <template>
-  <div class="list">
+  <div class="detail-wrap">
     <van-nav-bar
       title="车辆评估"
       left-text="返回"
       left-arrow
       @click-left="onClickLeft"
     />
-    <div class="mainContain">
+    <div class="mainContain" v-if="loadingLock">
         <div class="firstSection">
-            <div class="secTitle">车型信息</div>
+          <div class="secTitle">车型信息</div>
+          <div v-if="Object.keys(allDetails.modelInfo).length>0">
             <div class="rowDetail">
-                <div class="rowTitle">左边名称1</div>
-                <div class="rowValue">右边详情</div>
+                <div class="rowTitle">品牌</div>
+                <div class="rowValue">{{allDetails.modelInfo.brand_name}}</div>
             </div>
             <div class="rowDetail">
-                <div class="rowTitle">左边名称2</div>
-                <div class="rowValue">右边详情</div>
+                <div class="rowTitle">车系</div>
+                <div class="rowValue">{{allDetails.modelInfo.series_name}}</div>
             </div>
+            <div class="rowDetail">
+                <div class="rowTitle">车型</div>
+                <div class="rowValue">{{allDetails.modelInfo.model_name}}</div>
+            </div>
+            <div class="rowDetail">
+                <div class="rowTitle">车型年款</div>
+                <div class="rowValue">{{allDetails.modelInfo.model_year}}</div>
+            </div>
+            <div class="rowDetail">
+                <div class="rowTitle">车型指导价</div>
+                <div class="rowValue">{{allDetails.modelInfo.model_price}}</div>
+            </div>
+            <div class="rowDetail">
+                <div class="rowTitle">排放标准</div>
+                <div class="rowValue">{{allDetails.modelInfo.model_emission_standard}}</div>
+            </div>
+          </div>
+          <div v-else  class="noContain">无</div>
         </div>
         <div class="secondSection">
             <div class="secTitle">估值信息</div>
-            <div class="rowDetail">
-                <div class="rowTitle">左边名称1</div>
-                <div class="rowValue">右边详情</div>
+            <div v-if="Object.keys(allDetails.evaluateInfo).length>0">
+              <div class="rowDetail">
+                  <div class="rowTitle">所在城市</div>
+                  <div class="rowValue">{{allDetails.evaluateInfo.city_name}}</div>
+              </div>
+              <div class="rowDetail">
+                  <div class="rowTitle">上牌日期</div>
+                  <div class="rowValue">{{allDetails.evaluateInfo.reg_date}}</div>
+              </div>
+              <div class="rowDetail">
+                  <div class="rowTitle">行驶里程(万公里)</div>
+                  <div class="rowValue">{{allDetails.evaluateInfo.mile}}</div>
+              </div>
+              <div class="rowDetail">
+                  <div class="rowTitle">车商收购价</div>
+                  <div class="rowValue">{{allDetails.evaluateInfo.dealer_buy_price}}</div>
+              </div>
+              <div class="rowDetail">
+                  <div class="rowTitle">个人交易价</div>
+                  <div class="rowValue">{{allDetails.evaluateInfo.individual_price}}</div>
+              </div>
+                <div class="rowDetail">
+                  <div class="rowTitle">车商零售价</div>
+                  <div class="rowValue">{{allDetails.evaluateInfo.dealer_price}}</div>
+              </div>
+               <div class="rowDetail">
+                  <div class="rowTitle">估值报告</div>
+                  <div class="rowValue" @click="viewReport(allDetails.evaluateInfo.report_url)">点击查看</div>
+                  <!-- <div class="rowValue"><a :href="allDetails.evaluateInfo.report_url" target="_blank" rel="noopener noreferrer">点击查看</a></div> -->
+              </div>
+              <div class="rowDetail">
+                  <div class="rowTitle">报告时间</div>
+                  <div class="rowValue">{{allDetails.evaluateInfo.report_time}}</div>
+              </div>
             </div>
-            <div class="noContain">无</div>
+            <div v-else  class="noContain">无</div>
         </div>
         <div class="thirdSection">
             <div class="secTitle">综合车况</div>
-            <div class="rowDetail">
-                <div class="rowTitle">左边名称1</div>
-                <div class="rowValue">右边详情</div>
+            <div v-if="Object.keys(allDetails.wholestateInfo).length>0">
+              <div class="rowDetail">
+                  <div class="rowTitle">是否事故车</div>
+                  <div class="rowValue">{{allDetails.wholestateInfo.is_accident_car ? "是" : "否"}}</div>
+              </div>
+              <div class="rowDetail">
+                  <div class="rowTitle">事故等级</div>
+                  <div class="rowValue">{{allDetails.wholestateInfo.accident_grade}}</div>
+              </div>
+               <div class="rowDetail">
+                  <div class="rowTitle">车况报告</div>
+                  <div class="rowValue" @click="viewReport(allDetails.wholestateInfo.report_url)">点击查看</div>
+                  <!-- <div class="rowValue"><a :href="allDetails.wholestateInfo.report_url" target="_blank" rel="noopener noreferrer">点击查看</a></div> -->
+              </div>
+              <div class="rowDetail">
+                  <div class="rowTitle">报告时间</div>
+                  <div class="rowValue">{{allDetails.wholestateInfo.report_time}}</div>
+              </div>
             </div>
-            <div class="noContain">无</div>
+            <div v-else class="noContain">无</div>
         </div>
-    </div>
     <div class="searchBox">
-      <van-button  type="primary" size="small" @click="valueSearch()">估值查询</van-button>
-      <van-button  type="primary" size="small" @click="carSearch()">车况历史</van-button>
+      <van-button  type="primary" size="small" @click="evaluationSearch()">估值查询</van-button>
+      <van-button  type="primary" size="small" @click="carSearch()">车况查询</van-button>
       <van-button  type="primary" size="small" @click="carReport()">车型上报</van-button>
+    </div>
     </div>
     <div class="bottomBox">
       <van-button class="bottom-btn"  type="default" @click="codeSearch()">车架号查询</van-button>
@@ -47,14 +112,101 @@
   </div>
 </template>
 <script>
+import { Toast } from 'vant'
+import api from "../api/index.js"
 export default {
   data(){
     return {
-   
+      allDetails:{
+        modelInfo:{},
+        evaluateInfo:{},
+        wholestateInfo:{}
+      },
+      loadingLock:false,
     }
   },
+  created(){
+    this.getDetails()
+  },
   methods:{
-
+    //获取详情
+    getDetails(){
+      let query = {
+        vinNo:'',//车架号
+        modelId:'',//车型内码
+        modelName:'',//车型名称
+      };
+      if(this.$route.params != undefined && Object.keys(this.$route.params).length){
+        query =  Object.assign({},query,this.$route.params);
+      }
+      api.getDetais(query)
+      .then((res) => {
+        this.loadingLock = true;
+        if(res.status == 1){
+          this.allDetails.modelInfo = res.modelInfo;
+          this.allDetails.evaluateInfo = res.evaluateInfo;
+          this.allDetails.wholestateInfo = res.wholestateInfo;
+        }else{
+          Toast.fail(error_msg);
+        }
+      })
+      .catch(() => {
+        this.loadingLock = true;
+      })
+    },
+    onClickLeft(){
+      this.$router.go(-1)
+    },
+    viewReport(url){
+      window.location.href = url;
+    },
+    evaluationSearch(){
+      let formDatas = {
+        modelName: this.allDetails.modelInfo.model_name || '',
+        modelId: this.allDetails.modelInfo.model_id.toString() || '',//车型内码
+        regDate: this.allDetails.evaluateInfo.reg_date || '',//上牌日期
+        mile: this.allDetails.evaluateInfo.mile || '',//行驶里程
+        cityName: this.allDetails.evaluateInfo.city_name || '',//所在城市
+        zone: this.allDetails.evaluateInfo.zone || '',//所在城市编码
+        vinNo: window.localStorage.getItem("vinNo"),//车架号
+      }
+      this.$router.push({
+        name:'Evaluate',
+        params:formDatas
+      })
+    },
+    carSearch(){
+      let query = {
+        vinNo: window.localStorage.getItem("vinNo"),
+        brandName: this.allDetails.modelInfo.brand_name,
+        seriesName: this.allDetails.modelInfo.series_name,
+      };
+      api.generalInfo(query).then((res)=>{
+        if(res.status == 1){
+          Toast.success('提交成功！');
+        }else{
+          Toast.fail(error_msg);
+        }
+      })
+    },
+    carReport(){
+      let query = {
+        vinNo: window.localStorage.getItem("vinNo"),
+      };
+      api.carModelReport(query).then((res) => {
+        if(res.status == 1){
+          Toast.success('上报成功！');
+        }else{
+          Toast.fail(error_msg);
+        }
+      })
+    },
+    codeSearch(){
+      this.$router.push('/')
+    },
+    historySearch(){
+      this.$router.push('/list')
+    },
   }
 }
 </script>
@@ -80,12 +232,27 @@ export default {
   height: 1rem;
   display: flex;
   justify-content: space-between;
-  position: fixed;
-  bottom: 1.2rem;
+  // position: fixed;
+  // bottom: 1.0rem;
+  margin-top: .5rem;
   padding: 0 .133rem 0 .133rem;
+  // background-color: rgba(0,0,0,.3);
+  align-items: center;
+}
+.detail-wrap{
+  height: 100vh;
+  overflow:hidden;
+  display: flex;
+  flex-direction: column;
 }
 .mainContain{
     margin-top: .3rem;
+    flex: 1;
+    overflow: scroll;
+    padding-bottom: 1.5rem;
+    width: 100%;
+    padding-left: .2rem;
+    padding-right: .2rem;
     .secTitle{
         height: 1.1rem;
         line-height: 1.1rem;
@@ -118,6 +285,9 @@ export default {
         .rowValue{
             flex: 1;
             padding-left: .133rem;
+            overflow:hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
     }
 }
