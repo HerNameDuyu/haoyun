@@ -18,7 +18,7 @@ const codeMessage = {
   504: '网关超时。'
 }
 const baseURL = process.env.NODE_ENV == 'development' ? '/api' : process.env.VUE_APP_SERVICE_URL;
-const userId = window.localStorage.getItem('vinUserId') || '1012';
+const userId = window.localStorage.getItem('vinUserId') || '';
 const service = axios.create({
   baseURL :baseURL
 })

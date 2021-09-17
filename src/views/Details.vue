@@ -66,8 +66,7 @@
               </div>
                <div class="rowDetail">
                   <div class="rowTitle">估值报告</div>
-                  <div class="rowValue" @click="viewReport(allDetails.evaluateInfo.report_url)">点击查看</div>
-                  <!-- <div class="rowValue"><a :href="allDetails.evaluateInfo.report_url" target="_blank" rel="noopener noreferrer">点击查看</a></div> -->
+                  <div class="rowValue" @click="viewReport(allDetails.evaluateInfo.report_url)"  style="color:#169BD5">点击查看</div>
               </div>
               <div class="rowDetail">
                   <div class="rowTitle">报告时间</div>
@@ -89,8 +88,7 @@
               </div>
                <div class="rowDetail">
                   <div class="rowTitle">车况报告</div>
-                  <div class="rowValue" @click="viewReport(allDetails.wholestateInfo.report_url)">点击查看</div>
-                  <!-- <div class="rowValue"><a :href="allDetails.wholestateInfo.report_url" target="_blank" rel="noopener noreferrer">点击查看</a></div> -->
+                  <div class="rowValue" @click="viewReport(allDetails.wholestateInfo.report_url)" style="color:#169BD5">点击查看</div>
               </div>
               <div class="rowDetail">
                   <div class="rowTitle">报告时间</div>
@@ -105,7 +103,7 @@
       <van-button  type="primary" size="small" @click="carReport()">车型上报</van-button>
     </div>
     </div>
-    <div class="bottomBox">
+    <div class="bottomBox" v-if="hideShow">
       <van-button class="bottom-btn"  type="default" @click="codeSearch()">车架号查询</van-button>
       <van-button class="bottom-btn"  type="default" @click="historySearch()">查询历史</van-button>
     </div>
@@ -123,10 +121,30 @@ export default {
         wholestateInfo:{}
       },
       loadingLock:false,
+      docmHeight: document.documentElement.clientHeight,
+      showHeight: document.documentElement.clientHeight,
+      hideShow: true
     }
   },
   created(){
     this.getDetails()
+  },
+  mounted(){
+    window.onresize = () => {
+      return (
+        ()=>{
+          this.showHeight = document.body.clientHeight;
+        })()
+    }
+  },
+  watch:{
+    showHeight:function(){
+      if(this.docmHeight > this.showHeight){
+        this.hideShow = false;
+      }else{
+        this.hideShow = true;
+      }
+    }
   },
   methods:{
     //获取详情
@@ -168,9 +186,10 @@ export default {
         mile: this.allDetails.evaluateInfo.mile || '',//行驶里程
         cityName: this.allDetails.evaluateInfo.city_name || '',//所在城市
         zone: this.allDetails.evaluateInfo.zone || '',//所在城市编码
+        province: this.allDetails.evaluateInfo.province_name || '',
         vinNo: window.localStorage.getItem("vinNo"),//车架号
       }
-      this.$router.push({
+      this.$router.replace({
         name:'Evaluate',
         params:formDatas
       })
@@ -213,19 +232,6 @@ export default {
 <style scoped lang="scss">
 .search-btn{
   background-color: #D0C378;
-}
-.bottom-btn{
-  background-color: #91C5C7;
-  width:4rem;
-}
-.bottomBox{
-  width:100%;
-  height: 1rem;
-  display: flex;
-  justify-content: space-between;
-  position: fixed;
-  bottom: 0;
-  background-color: #E5EDF0;
 }
 .searchBox{
   width:100%;
@@ -291,6 +297,21 @@ export default {
         }
     }
 }
-
+.bottom-btn{
+  background-color: #91C5C7;
+  width:4rem;
+  height: 100%;
+  border:none !important;
+}
+.bottomBox{
+  width:100%;
+  height: 1.4rem;
+  display: flex;
+  justify-content: space-between;
+  position: fixed;
+  bottom: 0;
+  background-color: #E5EDF0;
+  padding: .2rem 0;
+}
 </style>
 

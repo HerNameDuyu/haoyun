@@ -20,8 +20,8 @@ const cdn = {
     js: [
       'https://lib.baomitu.com/vue/2.6.11/vue.min.js',
       'https://lib.baomitu.com/vue-router/3.2.0/vue-router.min.js',
-      'https://lib.baomitu.com/vuex/3.5.1/vuex.min.js',
-      'https://lib.baomitu.com/axios/0.19.2/axios.min.js',
+      'https://lib.baomitu.com/vuex/3.4.0/vuex.min.js',
+      'https://lib.baomitu.com/axios/0.21.4/axios.min.js',
       'https://lib.baomitu.com/hls.js/0.14.3/hls.min.js'
     ]
   }
@@ -99,7 +99,15 @@ module.exports = {
   outputDir: "dist",
   assetsDir: 'assets',
   publicPath: './',
-
+  pages: {
+    index: {
+      entry: './src/main.js',
+      template: path.join(__dirname, 'public/index.html'),
+      filename: 'index.html',
+      cdn: process.env.VUE_APP_NODE_ENV === 'production' && cdn.build || cdn.dev,
+      title: '  '
+    },
+  },
   lintOnSave: false, // 是否开启编译时是否不符合eslint提示
   devServer: {
     host: '0.0.0.0',
@@ -118,7 +126,7 @@ module.exports = {
     }
   },
   configureWebpack: config => {
-    configureWebpackData.externals = process.env.VUE_APP_NODE_ENV === 'production' ? externals : {};
+    configureWebpackData.externals = process.env.VUE_APP_NODE_ENV === 'production' && externals || {};
     // if (process.env.VUE_APP_NODE_ENV === 'production' || process.env.VUE_APP_NODE_ENV === 'devproduction') {
       config.plugins.push(
         new TerserPlugin({

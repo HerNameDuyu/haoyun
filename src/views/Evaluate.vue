@@ -10,16 +10,16 @@
       <!-- <van-form @submit="onSubmit"> -->
       <!-- <van-form> -->
         <van-row  class="city rowSection">
-          <van-col span="4">城 市：</van-col>
-          <van-col span="10" class="formItem">
+          <van-col span="5" class="left_tit">城 市：</van-col>
+          <van-col span="9" class="formItem">
             <div class="inputBox">
-              <input placeholder="请选择省份直辖市" v-model="formData.province" readonly @click="popCityPicker(0)"/>
+              <input placeholder="请选择省直辖市" v-model="formData.province" readonly @click="popCityPicker(0)"/>
               <div class="triangle" @click="popCityPicker(0)"></div>
             </div>
             <span class="label">省</span>
             </van-col>
       
-          <van-col span="10" class="formItem">
+          <van-col span="9" class="formItem">
             <div class="inputBox">
               <input placeholder="请选择城市" v-model="formData.cityName" readonly @click="popCityPicker(1)"/>
               <div class="triangle" @click="popCityPicker(1)"></div>
@@ -28,21 +28,21 @@
           </van-col>
         </van-row>
         <van-row  class="car rowSection">
-          <van-col span="4">车 型：</van-col>
-          <van-col span="20" class="formItem">
+          <van-col span="5" class="left_tit">车 型：</van-col>
+          <van-col span="19" class="formItem">
             <input :disabled="banEdit" placeholder="请输入车型" v-model="formData.modelName" type="text"/>
           </van-col>
         </van-row>
         <van-row  class="timer rowSection">
-          <van-col span="4">上牌日期：</van-col>
-          <van-col span="10" class="formItem">
+          <van-col span="5" class="left_tit">上牌日期：</van-col>
+          <van-col span="9" class="formItem">
             <div class="inputBox">
               <input placeholder="请选择年份" v-model="date.year" readonly @click="popTimePicker(2)"/>
               <div class="triangle" @click="popTimePicker(2)"></div>
             </div>
             <span class="label">年</span>
           </van-col>
-          <van-col span="10" class="formItem">
+          <van-col span="9" class="formItem">
             <div class="inputBox">
               <input placeholder="请选择月份" v-model="date.month" readonly @click="popTimePicker(3)"/>
               <div class="triangle" @click="popTimePicker(3)"></div>
@@ -51,16 +51,16 @@
           </van-col>
         </van-row>
         <van-row  class="mileage rowSection">
-          <van-col span="4">行驶里程：</van-col>
-          <van-col span="20" class="formItem">
-            <input placeholder="请输入里程" v-model="formData.mile"/>
+          <van-col span="5" class="left_tit">行驶里程：</van-col>
+          <van-col span="19" class="formItem">
+            <input placeholder="请输入里程" v-model="formData.mile" type="number"/>
             <span class="label">万公里</span>
           </van-col>
         </van-row>
 
         <div style="margin: 16px;">
           <van-button round block type="primary" native-type="submit" @click="onSubmit">
-            提交
+            快速估值
           </van-button>
         </div>
       <!-- </van-form> -->
@@ -73,7 +73,7 @@
         />
       </van-popup>
     </div>
-    <div class="bottomBox">
+    <div class="bottomBox" v-if="hideShow">
       <van-button class="bottom-btn"  type="default" @click="codeSearch()">车架号查询</van-button>
       <van-button class="bottom-btn"  type="default" @click="historySearch()">查询历史</van-button>
     </div>
@@ -107,6 +107,9 @@ export default {
       monthList:[1,2,3,4,5,6,7,8,9,10,11,12],
       provinceList:[],
       cityList:[],
+      docmHeight: document.documentElement.clientHeight,
+      showHeight: document.documentElement.clientHeight,
+      hideShow: true
     }
   },
   created(){
@@ -121,6 +124,23 @@ export default {
       this.date.month = dat.getMonth()+1;
     }
     this.formData.vinNo = window.localStorage.getItem("vinNo")
+  },
+  mounted(){
+    window.onresize = () => {
+      return (
+        ()=>{
+          this.showHeight = document.body.clientHeight;
+        })()
+    }
+  },
+  watch:{
+    showHeight:function(){
+      if(this.docmHeight > this.showHeight){
+        this.hideShow = false;
+      }else{
+        this.hideShow = true;
+      }
+    }
   },
   methods:{
     creatYearList(){
@@ -146,7 +166,8 @@ export default {
       this.valiteForm(this.formData).then(()=>{
         api.evaluate(this.formData).then((res) => {
           if(res.status == 1){
-            Toast.success('提交成功')
+            // Toast.success('提交成功')
+            window.location.href = res.url;
           }
         })
       })
@@ -208,10 +229,10 @@ export default {
       this.cityList = [];
     },
     codeSearch(){
-      this.$router.push('/')
+      this.$router.replace('/')
     },
     historySearch(){
-      this.$router.push('/list')
+      this.$router.replace('/list')
     },
     onClickLeft(){
       this.$router.replace('/details')
@@ -220,20 +241,6 @@ export default {
 }
 </script>
 <style scoped lang="scss" >
-.bottom-btn{
-  background-color: #91C5C7;
-  border:none !important;
-  width:4rem;
-}
-.bottomBox{
-  width:100%;
-  height: 1rem;
-  display: flex;
-  justify-content: space-between;
-  position: fixed;
-  bottom: 0;
-  background-color: #E5EDF0;
-}
 .triangle{
     width: 0;
     height: 0;
@@ -246,16 +253,28 @@ export default {
 
 }
 .mainContent{
-  margin-top: .4rem;
-  padding: .266667rem /* 20px -> .266667rem */ .133333rem ;
-  width: 100%;
+  margin: .266667rem  .266667rem /* 20px -> .266667rem */;
+  // width: 100%;
   .rowSection{
     margin-bottom: .266667rem /* 20px -> .266667rem */;
-    height: .8rem;
-    line-height: .8rem;
+    height: 1rem;
+    line-height: 1rem;
+    display: flex;
+    align-items: center;
+    .left_tit{
+      text-align: left;
+    }
   }
   input{
-    height: .6rem;
+    height: .8rem;
+    line-height: .8rem;
+    padding-left: .2rem;
+    box-shadow:none; /*去除阴影*/
+    outline: none;/*聚焦input的蓝色边框*/
+    resize: none; /*textarea 禁止拖拽*/
+    border: .013333rem #A9A9A9 solid; /*去除边框*/
+    -webkit-appearance: none;/*常用于IOS下移除原生样式*/
+    -webkit-tap-highlight-color: rgba(0,0,0,0); /*点击高亮的颜色*/
   }
   .timer,.city,.car{
     input{
@@ -277,6 +296,7 @@ export default {
   }
   .formItem{
     display: flex;
+    align-items: center;
   }
   .inputBox{
     width: 100%;
@@ -287,17 +307,23 @@ export default {
     margin-left: .14rem ;
     margin-right: .133333rem;
   }
-  // .formItem{
-  //   display: flex;
-  //   .formItem_left{
-  //     width: 15%;
-  //     text-align: right;
-  //   }
-  //   .formItem_right{
-  //     display: flex;
-  //     justify-content: space-around;
-  //   }
-  // }
+}
+
+.bottom-btn{
+  background-color: #91C5C7;
+  width:4rem;
+  height: 100%;
+  border:none !important;
+}
+.bottomBox{
+  width:100%;
+  height: 1.4rem;
+  display: flex;
+  justify-content: space-between;
+  position: fixed;
+  bottom: 0;
+  background-color: #E5EDF0;
+  padding: .2rem 0;
 }
 </style>
 

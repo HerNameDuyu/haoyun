@@ -5,7 +5,6 @@
       <router-link to="/about">About</router-link>
       <router-link to="/list">List</router-link>
     </div> -->
-    <div>没有值吗？</div>
     <router-view />
   </div>
 </template>
@@ -18,8 +17,20 @@ export default {
       hideShow: true
     }
   },
+  metaInfo: {
+    meta: [
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "viewport", content: "width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" },
+    ],
+  },
   created(){
     // console.log("APP创建啦！！！！！！！！！！！")
+    if(window.localStorage.getItem("vinNo")){
+      window.localStorage.removeItem("vinNo");
+    }
+    if(window.localStorage.getItem("vinUserId")){
+      window.localStorage.removeItem("vinUserId");
+  }
   },
   mounted(){
     window.onresize = () => {
@@ -32,7 +43,7 @@ export default {
   beforeDestroy(){
     // console.log("APP要销毁啦！！");
     // window.localStorage.removeItem('vinUserId')
-    // window.localStorage.removeItem('vinNo')
+    window.localStorage.removeItem('vinNo')
   },
   watch:{
     showHeight:function(){

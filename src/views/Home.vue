@@ -8,7 +8,6 @@
         <van-uploader :after-read="afterRead" 
         :accept="'image/*'" 
         >
-        <!-- <van-icon name="add-o" /> -->
         <div class="cameraBox">
           <img src="../assets/icons/camera1.png">
         </div>
@@ -36,7 +35,7 @@
 <script>
 import { Toast } from 'vant'
 import api from "../api/index.js"
-
+import config from "../config.js"
 export default {
   data(){
     return {
@@ -44,7 +43,6 @@ export default {
       fileList: [],
       showPopList: false,
       popList:[],
-
       docmHeight: document.documentElement.clientHeight,
       showHeight: document.documentElement.clientHeight,
       hideShow: true
@@ -72,7 +70,6 @@ export default {
       // window.localStorage.removeItem("vinNo");
       this.carCode = window.localStorage.getItem("vinNo")
     }
-    
   },
   methods:{
     getVin(imgUrlBase64){
@@ -186,7 +183,9 @@ export default {
       //   return
       // }
       if(!this.checkVin(this.carCode)){
-        Toast.fail('车架号格式不正确，请重新填写!')
+        Toast({
+          message:'车架号格式不正确，请重新填写！',
+        })
         return
       }
       let query = {
@@ -254,7 +253,7 @@ export default {
           ctx.fillRect(0,0,canvas.width,canvas.height);
           ctx.drawImage(image,0,0,width,height);
           //进行中等压缩
-          let nData = canvas.toDataURL('image/jpeg',0.5);
+          let nData = canvas.toDataURL('image/jpeg',config.compressRadio);
           if(nData.length/1024/1024 > 1.4){ //对半压缩后仍然大于1.5MB，提醒换小点图片吧
             Toast("图片体积过大，换小一点的图片吧！")
             nData = ''
@@ -285,10 +284,6 @@ export default {
   background-color: #D0C378;
   height: 100%;
 }
-.bottom-btn{
-  background-color: #91C5C7;
-  width:4rem;
-}
 .home-wrap{
   display: flex;
   flex-direction: column;
@@ -301,11 +296,8 @@ export default {
 
 }
 .inputBox{
-  // position: fixed;
-  // top:1.3rem;
-  margin: .1rem .1rem .6rem .1rem;
-  border:.013rem solid #297CE4;
-  width:100%;
+  margin: .1rem .2rem .6rem .2rem;
+  // width:100%;
   height: 1rem;
   display: flex;
   justify-content: space-between;
@@ -316,6 +308,13 @@ export default {
     border:none;
     background-color: transparent !important;
     padding-left: .2rem;
+    // border:.013rem solid #297CE4;
+    box-shadow:none; /*去除阴影*/
+    outline: none;/*聚焦input的蓝色边框*/
+    resize: none; /*textarea 禁止拖拽*/
+    border: .013333rem #A9A9A9 solid; /*去除边框*/
+    -webkit-appearance: none;/*常用于IOS下移除原生样式*/
+    -webkit-tap-highlight-color: rgba(0,0,0,0); /*点击高亮的颜色*/
   }
   .upLoadBox{
     position: absolute;
@@ -338,16 +337,22 @@ export default {
     }
   }
   .btnSearch{
-    width: 1.6rem /* 120px -> 1.6rem */;
+    width: 1.7rem /* 120px -> 1.6rem */;
   }
+}
+.bottom-btn{
+    background-color: #91C5C7;
+    width:4rem;
+    height: 100%;
 }
 .bottomBox{
   width:100%;
-  height: 1rem;
+  height: 1.4rem;
   display: flex;
   justify-content: space-between;
   position: fixed;
   bottom: 0;
   background-color: #E5EDF0;
+  padding: .2rem 0;
 }
 </style>

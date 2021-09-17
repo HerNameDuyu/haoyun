@@ -26,8 +26,11 @@
           <div class="imgBox">
             <img src="../assets/icons/search.png">
           </div>
-          <input type="search" v-model="searchValue" placeholder="请输入关键字查询" @keyup.enter = "getHisToryList" />
+          <input type="search" v-model="searchValue" placeholder="请输入关键字查询" @keyup.enter = "getHisToryList(2)" />
         </form>
+        <div class="btnSearch">
+          <van-button class="search-btn" type="primary"  @click="getHisToryList(2)">查询</van-button>
+        </div>
     </div>
     <div v-if="loadingLock" class="mainContent-wrap">
     <div class="mainContent" v-if="historyList.length>0">
@@ -71,7 +74,7 @@
     </div>
     <div class="mainContent" v-else>暂无搜索记录</div>
     </div>
-    <div class="bottomBox">
+    <div class="bottomBox" v-if="hideShow">
       <van-button class="bottom-btn"  type="default" @click="codeSearch()">车架号查询</van-button>
       <van-button class="bottom-btn"  type="default" @click="historySearch()">查询历史</van-button>
     </div>
@@ -93,31 +96,38 @@ export default {
         page: 1,
         total: 0
       },
-      loadingLock:false
+      loadingLock:false,
+      docmHeight: document.documentElement.clientHeight,
+      showHeight: document.documentElement.clientHeight,
+      hideShow: true
     }
   },
   created(){
-    this.getHisToryList()
+    this.getHisToryList(1)
+  },
+  mounted(){
+    window.onresize = () => {
+      return (
+        ()=>{
+          this.showHeight = document.body.clientHeight;
+        })()
+    }
+  },
+  watch:{
+    showHeight:function(){
+      if(this.docmHeight > this.showHeight){
+        this.hideShow = false;
+      }else{
+        this.hideShow = true;
+      }
+    }
   },
   methods:{
     onLoad(){
-      // setTimeout(() => {
-      //   for (let i = 0; i < 10; i++) {
-      //     this.list.push(this.list.length + 1);
-      //   }
-
-      //   // 加载状态结束
-      //   this.loading = false;
-
-      //   // 数据全部加载完成
-      //   if (this.list.length >= 40) {
-      //     this.finished = true;
-      //   }
-      // }, 1000);
       this.query.page ++ ;
-      this.getHisToryList();
+      this.getHisToryList(1);
     },
-    getHisToryList(){
+    getHisToryList(type){
       let queryData = {
         filter:this.searchValue,
         page: this.query.page,
@@ -128,8 +138,13 @@ export default {
         this.loadingLock = true;
         this.loading = false;
         let nextList = res.record_list || [];
-        if(res.status == 1){
-          this.historyList = this.historyList.concat(nextList);
+        if(res.status == 1){  
+          if(type==1){
+            this.historyList =  this.historyList.concat(nextList);
+          }
+          if(type==2){
+            this.historyList =  nextList;
+          }
           if(res.record_list.length < 1){
             this.finished = true;
           }
@@ -167,10 +182,6 @@ export default {
 }
 </script>
 <style scoped lang="scss" >  
-.bottom-btn{
-  background-color: #91C5C7;
-  width:4rem;
-}
 .list-wrap{
   height: 100vh;
   overflow:hidden;
@@ -239,27 +250,40 @@ export default {
   line-height: 1rem;
 }
 .inputBox{  
-  width:100%;
-  padding: 0 5%;
+  margin: .1rem .3rem .3rem .3rem;
   height: 1rem;
-  line-height: 1rem;
-  margin-bottom: .3rem;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  
-  form{
-    width: 100%;
+  justify-content: space-between;
+  position: relative;
+  .btnSearch{
+    width: 1.7rem /* 120px -> 1.6rem */;
+    height: 100%;
+    .search-btn{
+      background-color: #D0C378;
+      height: 100%;
+    }
+  }
+  #searchFrom{
+    flex:1;
+    // width: 100%;
     height: 100%;
     position: relative;
-    }
+  }
   input {
     width: 100%;
+    // flex: 1;
     height: 100%;
     border:none;
     padding-left: .8rem;
     border-radius: .133rem;
-    border: 1px solid #297CE4;
+    // border: 1px solid #297CE4;
+    // padding-left: .2rem;
+    box-shadow:none; /*去除阴影*/
+    outline: none;/*聚焦input的蓝色边框*/
+    resize: none; /*textarea 禁止拖拽*/
+    border: .013333rem #A9A9A9 solid; /*去除边框*/
+    -webkit-appearance: none;/*常用于IOS下移除原生样式*/
+    -webkit-tap-highlight-color: rgba(0,0,0,0); /*点击高亮的颜色*/
   }
   .imgBox{
     position: absolute;
@@ -274,13 +298,20 @@ export default {
     }
   }
 }
+.bottom-btn{
+  background-color: #91C5C7;
+  width:4rem;
+  height: 100%;
+  border:none !important;
+}
 .bottomBox{
   width:100%;
-  height: 1rem;
+  height: 1.4rem;
   display: flex;
   justify-content: space-between;
   position: fixed;
   bottom: 0;
   background-color: #E5EDF0;
+  padding: .2rem 0;
 }
 </style>

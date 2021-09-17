@@ -7,6 +7,10 @@ Vue.use(VueRouter);
 
 const routes = [
   {
+    path: "/dist",
+    redirect: "/"
+  },
+  {
     path: "/",
     name: "Home",
     component: Home,
@@ -39,7 +43,7 @@ const routes = [
 ];
 
 const router = new VueRouter({
-  mode:'history',
+  // mode:'history',
   routes,
 });
 router.beforeEach((to, from, next) => {
