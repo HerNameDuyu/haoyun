@@ -66,7 +66,7 @@
               </div>
                <div class="rowDetail">
                   <div class="rowTitle">估值报告</div>
-                  <div class="rowValue" @click="viewReport(allDetails.evaluateInfo.report_url)"  style="color:#169BD5">点击查看</div>
+                  <div class="rowValue" @click="viewReport(allDetails.evaluateInfo.report_url)"  style="color:#169BD5">{{allDetails.evaluateInfo.report_url?'点击查看':''}}</div>
               </div>
               <div class="rowDetail">
                   <div class="rowTitle">报告时间</div>
@@ -80,7 +80,9 @@
             <div v-if="Object.keys(allDetails.wholestateInfo).length>0">
               <div class="rowDetail">
                   <div class="rowTitle">是否事故车</div>
-                  <div class="rowValue">{{allDetails.wholestateInfo.is_accident_car ? "是" : "否"}}</div>
+                  <div class="rowValue" v-if="allDetails.wholestateInfo.is_accident_car == '1'">是</div>
+                  <div class="rowValue" v-else-if="allDetails.wholestateInfo.is_accident_car == '0'">否</div>
+                  <div class="rowValue" v-else></div>
               </div>
               <div class="rowDetail">
                   <div class="rowTitle">事故等级</div>
@@ -88,7 +90,7 @@
               </div>
                <div class="rowDetail">
                   <div class="rowTitle">车况报告</div>
-                  <div class="rowValue" @click="viewReport(allDetails.wholestateInfo.report_url)" style="color:#169BD5">点击查看</div>
+                  <div class="rowValue" @click="viewReport(allDetails.wholestateInfo.report_url)" style="color:#169BD5">{{allDetails.wholestateInfo.report_url?'点击查看':''}}</div>
               </div>
               <div class="rowDetail">
                   <div class="rowTitle">报告时间</div>
@@ -176,6 +178,7 @@ export default {
       this.$router.go(-1)
     },
     viewReport(url){
+      if(!url) return
       window.location.href = url;
     },
     evaluationSearch(){
@@ -224,7 +227,7 @@ export default {
       this.$router.push('/')
     },
     historySearch(){
-      this.$router.push('/list')
+      this.$router.replace('/list')
     },
   }
 }

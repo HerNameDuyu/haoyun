@@ -1,10 +1,5 @@
 <template>
   <div id="app">
-    <!-- <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-      <router-link to="/list">List</router-link>
-    </div> -->
     <router-view />
   </div>
 </template>
@@ -28,9 +23,6 @@ export default {
     if(window.localStorage.getItem("vinNo")){
       window.localStorage.removeItem("vinNo");
     }
-    if(window.localStorage.getItem("vinUserId")){
-      window.localStorage.removeItem("vinUserId");
-  }
   },
   mounted(){
     window.onresize = () => {
@@ -42,7 +34,7 @@ export default {
   },
   beforeDestroy(){
     // console.log("APP要销毁啦！！");
-    // window.localStorage.removeItem('vinUserId')
+    window.localStorage.removeItem('vinUserId')
     window.localStorage.removeItem('vinNo')
   },
   watch:{

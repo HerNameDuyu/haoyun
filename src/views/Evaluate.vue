@@ -109,19 +109,33 @@ export default {
       cityList:[],
       docmHeight: document.documentElement.clientHeight,
       showHeight: document.documentElement.clientHeight,
-      hideShow: true
+      hideShow: true,
+      lastPageForm:{
+        modelName:'',
+        modelId:'',
+        vinNo:''
+      }
     }
   },
   created(){
     this.creatYearList();
     if(this.$route.params != undefined && Object.keys(this.$route.params).length){
       this.formData = Object.assign({},this.formData,this.$route.params);
+      this.lastPageForm.modelName = this.$route.params.modelName || '';
+      this.lastPageForm.modelId = this.$route.params.modelId || '';
+      this.lastPageForm.vinNo = this.$route.params.vinNo || '';
       if(this.formData.modelName){
         this.banEdit = true;
       }
-      let dat = new Date(this.formData.regDate);
-      this.date.year = dat.getFullYear();
-      this.date.month = dat.getMonth()+1;
+      if(this.formData.regDate){
+        let dat = new Date(this.formData.regDate);
+        this.date.year = dat.getFullYear();
+        this.date.month = dat.getMonth()+1;
+      }else{
+        this.date.year = '';
+        this.date.month = '';
+      }
+ 
     }
     this.formData.vinNo = window.localStorage.getItem("vinNo")
   },
@@ -235,7 +249,10 @@ export default {
       this.$router.replace('/list')
     },
     onClickLeft(){
-      this.$router.replace('/details')
+      this.$router.replace({
+        name:'Details',
+        params: this.lastPageForm
+      })
     },
   }
 }

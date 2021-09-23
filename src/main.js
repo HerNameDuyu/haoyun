@@ -13,7 +13,7 @@ query = query.slice(1);
 let arr = query.split('&');
 let userId = '';
 arr.forEach((item) => {
-  if(item.includes('userId')){
+  if(item.includes('FUserID')){
     userId = item.split('=')[1];
     window.localStorage.setItem('vinUserId',userId);
   }

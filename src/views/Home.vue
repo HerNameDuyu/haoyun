@@ -193,14 +193,6 @@ export default {
       }
       api.matchCar(query).then((res) => {
         if(res.status == 1){
-          let obj = {
-            model_id: 82,
-            model_liter: "2.0T",
-            model_name: "2010 款 奥迪 A6L 2.0 TFSI 自动标准型",
-            model_price: 39.99
-          }
-          //假造数据
-          // res.modelInfo = [res.modelInfo[0],obj]
           if(res.modelInfo.length == 1){
             let formDatas ={
               vinNo : window.localStorage.getItem("vinNo"),
