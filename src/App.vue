@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" :style="{'height':appHeight}">
     <router-view />
   </div>
 </template>
@@ -9,7 +9,8 @@ export default {
     return {
       docmHeight: document.documentElement.clientHeight,
       showHeight: document.documentElement.clientHeight,
-      hideShow: true
+      hideShow: true,
+      appHeight:'100%'
     }
   },
   metaInfo: {
@@ -55,6 +56,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  position: relative;
 }
 
 #nav {

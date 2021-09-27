@@ -1,6 +1,8 @@
-const compressRadio = 0.2;
+const compressRadio = 0.8,
+      imgMaxWidth = 800
 
 export default  {
-    compressRadio
+    compressRadio,
+    imgMaxWidth
 
 }

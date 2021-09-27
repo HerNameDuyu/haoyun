@@ -1,7 +1,7 @@
 <template>
   <div class="home-wrap">
     <van-nav-bar
-      title="车辆评估"
+      title=""
     />
     <div class="inputBox">
       <div class="upLoadBox">
@@ -26,6 +26,9 @@
     <div class="popList" v-if="showPopList">
       <van-cell v-for="(item,index) in popList" :key="index" :title="item.model_name" :value="item.model_price+'万'"  @click="popRowClick(item)"/>
     </div>
+    <div v-if="loadingLock" class="loadingBox">
+      <van-loading size="24px">识别中...</van-loading>
+    </div>
     <div class="bottomBox" v-show="hideShow" >
       <van-button class="bottom-btn"  type="default" @click="codeSearch()">车架号查询</van-button>
       <van-button class="bottom-btn"  type="default" @click="historySearch()">查询历史</van-button>
@@ -45,7 +48,8 @@ export default {
       popList:[],
       docmHeight: document.documentElement.clientHeight,
       showHeight: document.documentElement.clientHeight,
-      hideShow: true
+      hideShow: true,
+      loadingLock:false
     }
   },
   watch:{
@@ -81,8 +85,12 @@ export default {
           if(res.status == 1){
             resolve(res.data || '')
           }else{
+            this.loadingLock = false;
             reject(res.error_msg)
           }
+        })
+        .catch(()=>{
+          this.loadingLock = false;
         })
       })
     },
@@ -92,17 +100,24 @@ export default {
       let baseImage = ''
       //接口图片上限是1.5MB,对大于1MB的图片进行压缩
       //压缩是一个异步过程
+      this.loadingLock = true;
       if(file.file.size > 1 * 1024 * 1024){
         baseImage = await this.compress(file.content);
       }else{
         baseImage = file.content;
       }
-      if(!baseImage){return}
-      this.getVin(baseImage).then((res) => {
+      if(!baseImage){
+        this.loadingLock = false;
+        return
+      }
+      this.getVin(baseImage)
+      .then((res) => {
+        this.loadingLock = false;
         this.carCode = res.vin;
       })
       .catch((err) => {
         Toast(err || "识别失败！")
+        this.loadingLock = false;
       })
 
     },
@@ -237,16 +252,17 @@ export default {
         image.onload = function(){
           let canvas = document.createElement('canvas');
           let ctx = canvas.getContext('2d');
-          let width = image.width;
-          let height = image.height;
+          let width = Math.min(config.imgMaxWidth,image.width);
+          let height = image.height * (width/image.width);
+          // let width = image.width;
+          // let height = image.height;
           canvas.height = height;
           canvas.width = width;
           ctx.fillStyle = '#fff';
           ctx.fillRect(0,0,canvas.width,canvas.height);
           ctx.drawImage(image,0,0,width,height);
-          //进行中等压缩
           let nData = canvas.toDataURL('image/jpeg',config.compressRadio);
-          if(nData.length/1024/1024 > 1.4){ //对半压缩后仍然大于1.5MB，提醒换小点图片吧
+          if(nData.length/1024/1024 > 1.4){ //压缩后仍然大于1.5MB，提醒换小点图片吧
             Toast("图片体积过大，换小一点的图片吧！")
             nData = ''
             resolve(nData)
@@ -256,7 +272,6 @@ export default {
           // document.body.appendChild(image)
         }
       })
-
     },
   }
 }
@@ -279,13 +294,19 @@ export default {
 .home-wrap{
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;
   overflow: hidden;
   .popList{
     flex: 1;
     overflow-y: scroll;
   }
 
+}
+.loadingBox{
+  flex:1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .inputBox{
   margin: .1rem .2rem .6rem .2rem;
@@ -342,7 +363,7 @@ export default {
   height: 1.4rem;
   display: flex;
   justify-content: space-between;
-  position: fixed;
+  position: absolute;
   bottom: 0;
   background-color: #E5EDF0;
   padding: .2rem 0;

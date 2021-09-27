@@ -14,7 +14,7 @@ const routes = [
     path: "/",
     name: "Home",
     component: Home,
-    meta:{ title : "车况查询",keepAlive:false },
+    meta:{ title : "车辆评估",keepAlive:false },
   },
   {
     path: "/details",

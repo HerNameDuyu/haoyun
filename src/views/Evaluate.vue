@@ -1,7 +1,7 @@
 <template>
-  <div class="evaluate">
+  <div class="evaluate-wrap">
     <van-nav-bar
-      title="车辆评估"
+      title=""
       left-text="返回"
       left-arrow
       @click-left="onClickLeft"
@@ -337,7 +337,7 @@ export default {
   height: 1.4rem;
   display: flex;
   justify-content: space-between;
-  position: fixed;
+  position: absolute;
   bottom: 0;
   background-color: #E5EDF0;
   padding: .2rem 0;

@@ -1,12 +1,12 @@
 <template>
   <div class="list-wrap">
     <van-nav-bar
-      title="车辆评估"
+      title=""
       left-text="返回"
       left-arrow
       @click-left="onClickLeft"
     />
-    <div class="historyTitle">查询历史</div>
+
     <!-- <van-cell-group inset class="searchWrap">
       <van-field
         class = "searchBox"
@@ -183,7 +183,7 @@ export default {
 </script>
 <style scoped lang="scss" >  
 .list-wrap{
-  height: 100vh;
+  height: 100%;
   overflow:hidden;
   display: flex;
   flex-direction: column;
@@ -193,10 +193,6 @@ export default {
   overflow: scroll;
 }
 .mainContent{
-  // position: absolute;
-  // top: 3.5rem;
-  // flex: 1;
-  // overflow: scroll;
   height:100%;
   margin-top: .266667rem;
   padding-bottom: 1.2rem;
@@ -309,7 +305,7 @@ export default {
   height: 1.4rem;
   display: flex;
   justify-content: space-between;
-  position: fixed;
+  position: absolute;
   bottom: 0;
   background-color: #E5EDF0;
   padding: .2rem 0;
