@@ -136,8 +136,9 @@ export default {
         this.date.month = '';
       }
  
+    }else{
+      this.$router.push('/');
     }
-    this.formData.vinNo = window.localStorage.getItem("vinNo")
   },
   mounted(){
     window.onresize = () => {

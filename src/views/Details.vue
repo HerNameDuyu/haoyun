@@ -158,6 +158,9 @@ export default {
       };
       if(this.$route.params != undefined && Object.keys(this.$route.params).length){
         query =  Object.assign({},query,this.$route.params);
+      }else{
+        this.$router.push('/');
+        return
       }
       api.getDetais(query)
       .then((res) => {
@@ -190,7 +193,7 @@ export default {
         cityName: this.allDetails.evaluateInfo.city_name || '',//所在城市
         zone: this.allDetails.evaluateInfo.zone || '',//所在城市编码
         province: this.allDetails.evaluateInfo.province_name || '',
-        vinNo: window.localStorage.getItem("vinNo"),//车架号
+        vinNo: this.$route.params.vinNo || window.localStorage.getItem("vinNo"),//车架号
       }
       this.$router.replace({
         name:'Evaluate',
@@ -199,7 +202,7 @@ export default {
     },
     carSearch(){
       let query = {
-        vinNo: window.localStorage.getItem("vinNo"),
+        vinNo: this.$route.params.vinNo || window.localStorage.getItem("vinNo"),
         brandName: this.allDetails.modelInfo.brand_name,
         seriesName: this.allDetails.modelInfo.series_name,
       };
@@ -213,7 +216,7 @@ export default {
     },
     carReport(){
       let query = {
-        vinNo: window.localStorage.getItem("vinNo"),
+        vinNo: this.$route.params.vinNo || window.localStorage.getItem("vinNo"),
       };
       api.carModelReport(query).then((res) => {
         if(res.status == 1){

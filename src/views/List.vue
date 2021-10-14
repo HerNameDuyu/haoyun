@@ -157,7 +157,7 @@ export default {
     },
     goDetails(item){
       let formDatas ={
-        vinNo : item.vin_no || window.localStorage.getItem("vinNo"),
+        vinNo : item.vin_no,
         modelId : item.model_name,
         modelName : item.model_id,
       }

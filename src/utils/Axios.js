@@ -17,6 +17,19 @@ const codeMessage = {
   503: '服务不可用，服务器暂时过载或维护。',
   504: '网关超时。'
 }
+let query = window.location.search;
+query = query.slice(1);
+let arr = query.split('&');
+let vinUserId = '';
+arr.forEach((item) => {
+  if(item.includes('FUserID')){
+    vinUserId = item.split('=')[1];
+    window.localStorage.setItem('vinUserId',vinUserId);
+  }
+})
+if(!vinUserId){
+  console.log('用户内码为空')
+}
 const baseURL = process.env.NODE_ENV == 'development' ? '/api' : process.env.VUE_APP_SERVICE_URL;
 const userId = window.localStorage.getItem('vinUserId') || '';
 const service = axios.create({
