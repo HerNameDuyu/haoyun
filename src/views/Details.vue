@@ -52,16 +52,16 @@
                   <div class="rowTitle">行驶里程(万公里)</div>
                   <div class="rowValue">{{allDetails.evaluateInfo.mile}}</div>
               </div>
-              <div class="rowDetail">
+              <!-- <div class="rowDetail">
                   <div class="rowTitle">车商收购价</div>
                   <div class="rowValue">{{allDetails.evaluateInfo.dealer_buy_price}}</div>
-              </div>
-              <div class="rowDetail">
+              </div> -->
+              <!-- <div class="rowDetail">
                   <div class="rowTitle">个人交易价</div>
                   <div class="rowValue">{{allDetails.evaluateInfo.individual_price}}</div>
-              </div>
+              </div> -->
                 <div class="rowDetail">
-                  <div class="rowTitle">车商零售价</div>
+                  <div class="rowTitle">评估价格</div>
                   <div class="rowValue">{{allDetails.evaluateInfo.dealer_price}}</div>
               </div>
                <div class="rowDetail">
@@ -88,10 +88,10 @@
                   <div class="rowTitle">事故等级</div>
                   <div class="rowValue">{{allDetails.wholestateInfo.accident_grade}}</div>
               </div>
-               <div class="rowDetail">
+               <!-- <div class="rowDetail">
                   <div class="rowTitle">车况报告</div>
                   <div class="rowValue" @click="viewReport(allDetails.wholestateInfo.report_url)" style="color:#169BD5">{{allDetails.wholestateInfo.report_url?'点击查看':''}}</div>
-              </div>
+              </div> -->
               <div class="rowDetail">
                   <div class="rowTitle">报告时间</div>
                   <div class="rowValue">{{allDetails.wholestateInfo.report_time}}</div>
@@ -109,10 +109,27 @@
       <van-button class="bottom-btn"  type="default" @click="codeSearch()">车架号查询</van-button>
       <van-button class="bottom-btn"  type="default" @click="historySearch()">查询历史</van-button>
     </div>
+    <div v-if="showReason">
+    <van-dialog
+      use-slot
+      title="车型上报原因"
+      v-model="showReason"
+      :show-cancel-button="false"
+      :show-confirm-button="false"
+    >
+      <div style="margin-top:10px;margin-bottom:10px">
+        <input  v-model="reportReason" placeholder="请填写车型上报原因" /><span class="requiredMark">(*必填)</span>
+      </div>
+      <div class="confirmBox">
+        <span @click="onCancel">取消</span>
+        <span @click="onConfirm">上报</span>
+      </div>
+    </van-dialog>
+    </div>
   </div>
 </template>
 <script>
-import { Toast } from 'vant'
+import {  Toast } from 'vant'
 import api from "../api/index.js"
 export default {
   data(){
@@ -125,7 +142,9 @@ export default {
       loadingLock:false,
       docmHeight: document.documentElement.clientHeight,
       showHeight: document.documentElement.clientHeight,
-      hideShow: true
+      hideShow: true,
+      showReason:false,
+      reportReason:'',//车型上报原因
     }
   },
   created(){
@@ -146,6 +165,9 @@ export default {
       }else{
         this.hideShow = true;
       }
+    },
+    showReason(n,o){
+      if(!n){this.reportReason = ''}
     }
   },
   methods:{
@@ -214,9 +236,18 @@ export default {
         }
       })
     },
-    carReport(){
-      let query = {
+    onCancel(){
+      this.showReason = false;
+    },
+    onConfirm(){
+      if(this.reportReason){
+        this.carReports()
+      }
+    },
+    carReports(){
+    let query = {
         vinNo: this.$route.params.vinNo || window.localStorage.getItem("vinNo"),
+        reason: this.reportReason
       };
       api.carModelReport(query).then((res) => {
         if(res.status == 1){
@@ -224,7 +255,16 @@ export default {
         }else{
           Toast.fail(error_msg);
         }
+        this.showReason = false
       })
+      .catch(()=>{
+        this.showReason = false
+      })
+    },
+    carReport(){
+      this.showReason = true;
+      // reportReason
+
     },
     codeSearch(){
       this.$router.push('/')
@@ -236,6 +276,30 @@ export default {
 }
 </script>
 <style scoped lang="scss">
+input{
+  height: .8rem;
+  line-height: .8rem;
+  padding-left: .2rem;
+  box-shadow:none; /*去除阴影*/
+  outline: none;/*聚焦input的蓝色边框*/
+  resize: none; /*textarea 禁止拖拽*/
+  border: .013333rem #A9A9A9 solid; /*去除边框*/
+  -webkit-appearance: none;/*常用于IOS下移除原生样式*/
+  -webkit-tap-highlight-color: rgba(0,0,0,0); /*点击高亮的颜色*/
+  border-radius: .053333rem /* 4px -> .053333rem */;
+}
+.confirmBox{
+  height: 1.066667rem /* 80px -> 1.066667rem */;
+  display: flex;
+  align-items: center;
+  span{
+    width: 100%;
+  }
+}
+.requiredMark{
+  color: rgb(201, 53, 53);
+  font-size: .026667rem /* 2px -> .026667rem */;
+}
 .search-btn{
   background-color: #D0C378;
 }
