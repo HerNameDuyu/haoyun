@@ -12,27 +12,27 @@
           <div v-if="Object.keys(allDetails.modelInfo).length>0">
             <div class="rowDetail">
                 <div class="rowTitle">品牌</div>
-                <div class="rowValue">{{allDetails.modelInfo.brand_name}}</div>
+                <div class="rowValue" @click="showToolTip(allDetails.modelInfo.brand_name)">{{allDetails.modelInfo.brand_name}}</div>
             </div>
             <div class="rowDetail">
                 <div class="rowTitle">车系</div>
-                <div class="rowValue">{{allDetails.modelInfo.series_name}}</div>
+                <div class="rowValue" @click="showToolTip(allDetails.modelInfo.series_name)">{{allDetails.modelInfo.series_name}}</div>
             </div>
             <div class="rowDetail">
                 <div class="rowTitle">车型</div>
-                <div class="rowValue">{{allDetails.modelInfo.model_name}}</div>
+                <div class="rowValue" @click="showToolTip(allDetails.modelInfo.model_name)">{{allDetails.modelInfo.model_name}}</div>
             </div>
             <div class="rowDetail">
                 <div class="rowTitle">车型年款</div>
-                <div class="rowValue">{{allDetails.modelInfo.model_year}}</div>
+                <div class="rowValue" @click="showToolTip(allDetails.modelInfo.model_year)">{{allDetails.modelInfo.model_year}}</div>
             </div>
             <div class="rowDetail">
                 <div class="rowTitle">车型指导价</div>
-                <div class="rowValue">{{allDetails.modelInfo.model_price}}</div>
+                <div class="rowValue" @click="showToolTip(allDetails.modelInfo.model_price)">{{allDetails.modelInfo.model_price}}</div>
             </div>
             <div class="rowDetail">
                 <div class="rowTitle">排放标准</div>
-                <div class="rowValue">{{allDetails.modelInfo.model_emission_standard}}</div>
+                <div class="rowValue" @click="showToolTip(allDetails.modelInfo.model_emission_standard)">{{allDetails.modelInfo.model_emission_standard}}</div>
             </div>
           </div>
           <div v-else  class="noContain">无</div>
@@ -42,15 +42,15 @@
             <div v-if="Object.keys(allDetails.evaluateInfo).length>0">
               <div class="rowDetail">
                   <div class="rowTitle">所在城市</div>
-                  <div class="rowValue">{{allDetails.evaluateInfo.city_name}}</div>
+                  <div class="rowValue" @click="showToolTip(allDetails.evaluateInfo.city_name)">{{allDetails.evaluateInfo.city_name}}</div>
               </div>
               <div class="rowDetail">
                   <div class="rowTitle">上牌日期</div>
-                  <div class="rowValue">{{allDetails.evaluateInfo.reg_date}}</div>
+                  <div class="rowValue" @click="showToolTip(allDetails.evaluateInfo.reg_date)">{{allDetails.evaluateInfo.reg_date}}</div>
               </div>
               <div class="rowDetail">
                   <div class="rowTitle">行驶里程(万公里)</div>
-                  <div class="rowValue">{{allDetails.evaluateInfo.mile}}</div>
+                  <div class="rowValue" @click="showToolTip(allDetails.evaluateInfo.mile)">{{allDetails.evaluateInfo.mile}}</div>
               </div>
               <!-- <div class="rowDetail">
                   <div class="rowTitle">车商收购价</div>
@@ -62,7 +62,7 @@
               </div> -->
                 <div class="rowDetail">
                   <div class="rowTitle">评估价格</div>
-                  <div class="rowValue">{{allDetails.evaluateInfo.dealer_price}}</div>
+                  <div class="rowValue" @click="showToolTip(allDetails.evaluateInfo.dealer_price)">{{allDetails.evaluateInfo.dealer_price}}</div>
               </div>
                <div class="rowDetail">
                   <div class="rowTitle">估值报告</div>
@@ -70,7 +70,7 @@
               </div>
               <div class="rowDetail">
                   <div class="rowTitle">报告时间</div>
-                  <div class="rowValue">{{allDetails.evaluateInfo.report_time}}</div>
+                  <div class="rowValue" @click="showToolTip(allDetails.evaluateInfo.report_time)">{{allDetails.evaluateInfo.report_time}}</div>
               </div>
             </div>
             <div v-else  class="noContain">无</div>
@@ -86,7 +86,7 @@
               </div>
               <div class="rowDetail">
                   <div class="rowTitle">事故等级</div>
-                  <div class="rowValue">{{allDetails.wholestateInfo.accident_grade}}</div>
+                  <div class="rowValue" @click="showToolTip(allDetails.wholestateInfo.accident_grade)">{{allDetails.wholestateInfo.accident_grade}}</div>
               </div>
                <!-- <div class="rowDetail">
                   <div class="rowTitle">车况报告</div>
@@ -94,7 +94,7 @@
               </div> -->
               <div class="rowDetail">
                   <div class="rowTitle">报告时间</div>
-                  <div class="rowValue">{{allDetails.wholestateInfo.report_time}}</div>
+                  <div class="rowValue" @click="showToolTip(allDetails.wholestateInfo.report_time)">{{allDetails.wholestateInfo.report_time}}</div>
               </div>
             </div>
             <div v-else class="noContain">无</div>
@@ -271,6 +271,11 @@ export default {
     },
     historySearch(){
       this.$router.replace('/list')
+    },
+    showToolTip(val){
+      if(!(val===''|| val === null || val === undefined)){
+        Toast(val)
+      }
     },
   }
 }
