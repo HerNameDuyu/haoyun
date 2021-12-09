@@ -117,9 +117,17 @@
       :show-cancel-button="false"
       :show-confirm-button="false"
     >
-      <div style="margin-top:10px;margin-bottom:10px">
+      <div class="formItemBox" style="margin-top:10px;margin-bottom:10px">
         <input  v-model="reportReason" placeholder="请填写车型上报原因" /><span class="requiredMark">(*必填)</span>
       </div>
+      <div class="formItemBox">
+        <van-uploader :after-read="afterRead" 
+          accept="all/*" multiple
+        >
+          <van-button icon="plus" type="primary" size="small">上传附件</van-button>
+        </van-uploader>
+      </div>
+
       <div class="confirmBox">
         <span @click="onCancel">取消</span>
         <span @click="onConfirm">上报</span>
@@ -145,6 +153,8 @@ export default {
       hideShow: true,
       showReason:false,
       reportReason:'',//车型上报原因
+      files:'',
+      filesData:'',
     }
   },
   created(){
@@ -245,11 +255,15 @@ export default {
       }
     },
     carReports(){
-    let query = {
+      let query = {
         vinNo: this.$route.params.vinNo || window.localStorage.getItem("vinNo"),
-        reason: this.reportReason
+        reason: this.reportReason,
+        userId : window.localStorage.getItem('vinUserId') || ''
       };
-      api.carModelReport(query).then((res) => {
+      this.filesData.append('vinNo', query.vinNo);
+      this.filesData.append('reason', query.reason);
+      this.filesData.append('userId', query.userId);
+      api.carModelReport(this.filesData).then((res) => {
         if(res.status == 1){
           Toast.success('上报成功！');
         }else{
@@ -276,6 +290,28 @@ export default {
       if(!(val===''|| val === null || val === undefined)){
         Toast(val)
       }
+    },
+    afterRead(files){
+      this.filesData = new FormData();
+      if(files.length && files.length >1){
+        this.files = [];
+        files.forEach((file)=>{
+          this.files.push(file.file);
+          let randomstr = this.randomNumber();
+          this.filesData.append(`${randomstr}${file.file.name}`, file.file);
+        })
+      }else{
+        this.files = files.file;
+        this.filesData.append("file", files.file);
+      }
+    },
+    randomNumber(length = 6, chars) {
+      let result = "";
+      let charsString = chars || "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      for (let i = length; i > 0; --i) {
+        result += charsString[Math.floor(Math.random() * charsString.length)];
+      }
+      return result;
     },
   }
 }
@@ -387,6 +423,11 @@ input{
   bottom: 0;
   background-color: #E5EDF0;
   padding: .2rem 0;
+}
+.formItemBox{
+  display: flex;
+  align-items: center;
+  padding-left: 60px;
 }
 </style>
 

@@ -38,7 +38,7 @@ const service = axios.create({
 // 请求拦截器
 service.interceptors.request.use(
     config => {
-      let contentType = ''
+      let contentType = '';
       if (config.method == 'post') {
         // contentType = 'application/json'
         // contentType = 'text/json; charset=UTF-8'
@@ -50,18 +50,23 @@ service.interceptors.request.use(
         // 'X-Requested-With': 'XMLHttpRequest',
         'Content-Type': contentType,
       }
-      const head = Object.assign(config.headers,header);
+      const head = Object.assign(header,config.headers);
       config.headers = head
       // do something before request is sent
-      if(config.method == ('post' || 'POST')){
-      //  config.data = Object.assign(config.data,{userId:userId});
-      //  config.data = JSON.stringify(Object.assign(config.data,{userId:userId}));
-      config.data += `&userId=${userId}`
+      if(config.type === 1){
+        // formData  "Content-Type": "multipart/form-data"
+      }else{
+        if(config.method == ('post' || 'POST')){
+          //  config.data = Object.assign(config.data,{userId:userId});
+          //  config.data = JSON.stringify(Object.assign(config.data,{userId:userId}));
+          config.data += `&userId=${userId}`
+        }
+        if(config.method == ('get' || 'GET')){
+          config.params = Object.assign(config.params,{userId:userId});
+          // config.headers['Content-Type'] = 'application/json'
+        }
       }
-      if(config.method == ('get' || 'GET')){
-        config.params = Object.assign(config.params,{userId:userId});
-        // config.headers['Content-Type'] = 'application/json'
-      }
+
       return config;
     },
     error => {

@@ -1,4 +1,5 @@
 import request from "../utils/Axios.js"
+const headers = { "Content-Type": "multipart/form-data" };
 // 数据格式
 export default {
     // 行驶证ocr识别
@@ -20,7 +21,6 @@ export default {
         method: "post",
         data:data
       });
-      // return request.post('API_Evaluate_OcrDiscern',query)
     },
     //根据车架号搜索查询
     matchCar(query){
@@ -70,11 +70,22 @@ export default {
     //车型上报
     carModelReport(query){
       return request({
-        url: `API_Evaluate_CarModelReport`,
-        method: "get",
-        params:{...query}
+        type:1,
+        headers,
+        url: `API_Evaluate_CarModelReportNew`,
+        method: "post",
+        data:query
       })
     },
+    // carModelReport(files){
+    //   return request({
+    //     type:1,
+    //     headers,
+    //     url: `API_Evaluate_CarModelReportNew?userId=4827&vinNo=LVHRW1867K7079822`,
+    //     method: "post",
+    //     data: files
+    //   })
+    // },
     //车况查询
     generalInfo(query){
       return request({
