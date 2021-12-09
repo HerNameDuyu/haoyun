@@ -117,15 +117,28 @@
       :show-cancel-button="false"
       :show-confirm-button="false"
     >
-      <div class="formItemBox" style="margin-top:10px;margin-bottom:10px">
-        <input  v-model="reportReason" placeholder="请填写车型上报原因" /><span class="requiredMark">(*必填)</span>
+      <div class="formItemBox1">
+        <div class="innerBox">
+          <input  v-model="reportReason" placeholder="请填写车型上报原因(必填)" />
+        </div>
       </div>
-      <div class="formItemBox">
-        <van-uploader :after-read="afterRead" 
-          accept="all/*" multiple
-        >
-          <van-button icon="plus" type="primary" size="small">上传附件</van-button>
-        </van-uploader>
+      <div class="formItemBox2">
+        <div class="innerBox">
+          <div class="leftBtn">
+              <van-uploader :after-read="afterRead" 
+              accept="media"   multiple 
+              >
+                <van-button icon="plus" type="primary" size="small">上传附件</van-button>
+              </van-uploader>
+            </div>
+            <div class="rightContent">
+               <div class="item" v-for="(file,index) in filesList" :key="index">
+                <span>{{index+1}}.{{file.file.name}}</span>
+                <van-icon name="close" @click="deleteFlie(index)" />
+              </div>
+            </div>
+        </div>
+ 
       </div>
 
       <div class="confirmBox">
@@ -153,7 +166,7 @@ export default {
       hideShow: true,
       showReason:false,
       reportReason:'',//车型上报原因
-      files:'',
+      filesList:[],
       filesData:'',
     }
   },
@@ -177,7 +190,10 @@ export default {
       }
     },
     showReason(n,o){
-      if(!n){this.reportReason = ''}
+      if(!n){
+        this.reportReason = '';
+        this.filesList = [];
+      }
     }
   },
   methods:{
@@ -255,6 +271,7 @@ export default {
       }
     },
     carReports(){
+      this.filesData = new FormData();
       let query = {
         vinNo: this.$route.params.vinNo || window.localStorage.getItem("vinNo"),
         reason: this.reportReason,
@@ -263,6 +280,12 @@ export default {
       this.filesData.append('vinNo', query.vinNo);
       this.filesData.append('reason', query.reason);
       this.filesData.append('userId', query.userId);
+      this.filesList.forEach((file)=>{
+          let randomstr = this.randomNumber();
+          this.filesData.append(`${randomstr}${file.file.name}`, file.file);
+      })
+
+
       api.carModelReport(this.filesData).then((res) => {
         if(res.status == 1){
           Toast.success('上报成功！');
@@ -292,18 +315,14 @@ export default {
       }
     },
     afterRead(files){
-      this.filesData = new FormData();
       if(files.length && files.length >1){
-        this.files = [];
         files.forEach((file)=>{
-          this.files.push(file.file);
-          let randomstr = this.randomNumber();
-          this.filesData.append(`${randomstr}${file.file.name}`, file.file);
+          this.filesList.push(file);
         })
       }else{
-        this.files = files.file;
-        this.filesData.append("file", files.file);
+        this.filesList.push(files);
       }
+
     },
     randomNumber(length = 6, chars) {
       let result = "";
@@ -313,6 +332,9 @@ export default {
       }
       return result;
     },
+    deleteFlie(index){
+      this.filesList.splice(index,1)
+    }
   }
 }
 </script>
@@ -333,6 +355,7 @@ input{
   height: 1.066667rem /* 80px -> 1.066667rem */;
   display: flex;
   align-items: center;
+  border-top: 1px solid #ddeedd;
   span{
     width: 100%;
   }
@@ -424,10 +447,55 @@ input{
   background-color: #E5EDF0;
   padding: .2rem 0;
 }
-.formItemBox{
+.formItemBox1{
   display: flex;
   align-items: center;
-  padding-left: 60px;
+  margin-top:.266667rem;
+  margin-bottom:.266667rem;
+  justify-content: center;
+  .innerBox{
+    width:6.666667rem;
+  }
+}
+.formItemBox2{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .innerBox{
+    width:6.666667rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .leftBtn{
+    width: 2.266667rem;
+  }
+  .rightContent{
+    margin-top: .266667rem;
+    width: 5.333333rem /* 400px -> 5.333333rem */;
+    max-height: 3.6rem /* 270px -> 3.6rem */;
+    overflow-y: auto;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE 10+, edge */
+    &::-webkit-scrollbar {
+        display: none; /* Chrome Safari */
+        // 或者 width: 0;
+    }
+    .item{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: .666667rem /* 50px -> .666667rem */;
+      span{
+        width: 4.666667rem /* 350px -> 4.666667rem */;
+        text-align: left;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: .266667rem /* 20px -> .266667rem */;
+      }
+    }
+  }
 }
 </style>
 
