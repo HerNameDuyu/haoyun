@@ -52,16 +52,16 @@
                   <div class="rowTitle">行驶里程(万公里)</div>
                   <div class="rowValue" @click="showToolTip(allDetails.evaluateInfo.mile)">{{allDetails.evaluateInfo.mile}}</div>
               </div>
-              <!-- <div class="rowDetail">
-                  <div class="rowTitle">车商收购价</div>
-                  <div class="rowValue">{{allDetails.evaluateInfo.dealer_buy_price}}</div>
-              </div> -->
+              <div class="rowDetail">
+                  <div class="rowTitle">回租评估价</div>
+                  <div class="rowValue" @click="showToolTip(allDetails.evaluateInfo.dealer_buy_price)">{{allDetails.evaluateInfo.dealer_buy_price}}</div>
+              </div>
               <!-- <div class="rowDetail">
                   <div class="rowTitle">个人交易价</div>
                   <div class="rowValue">{{allDetails.evaluateInfo.individual_price}}</div>
               </div> -->
                 <div class="rowDetail">
-                  <div class="rowTitle">评估价格</div>
+                  <div class="rowTitle">卡贷评估价</div>
                   <div class="rowValue" @click="showToolTip(allDetails.evaluateInfo.dealer_price)">{{allDetails.evaluateInfo.dealer_price}}</div>
               </div>
                <div class="rowDetail">
@@ -125,8 +125,14 @@
       <div class="formItemBox2">
         <div class="innerBox">
           <div class="leftBtn">
+               <van-uploader :after-read="afterRead" 
+                accept="vedio/*,.mp4,.mov,.ogg"   multiple 
+              >
+                <van-button icon="photograph" type="primary" size="small">上传视频</van-button>
+              </van-uploader>
+              <div style="margin-left:10px"></div>
               <van-uploader :after-read="afterRead" 
-              accept="media"   multiple 
+              accept="*"   multiple 
               >
                 <van-button icon="plus" type="primary" size="small">上传附件</van-button>
               </van-uploader>
@@ -468,7 +474,8 @@ input{
     align-items: center;
   }
   .leftBtn{
-    width: 2.266667rem;
+    // width: 2.266667rem;
+    display: flex;
   }
   .rightContent{
     margin-top: .266667rem;
