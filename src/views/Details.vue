@@ -11,18 +11,33 @@
         <van-button
           type="info"
           size="small"
-          @click="evaluationSearch()"
+          v-throttle="
+            () => {
+              evaluationSearch(), 3000;
+            }
+          "
           :disabled="allDetails.evaluateInfo.buttonEnable == 1"
           >估值查询</van-button
         >
         <van-button
           type="info"
           size="small"
-          @click="carSearch()"
+          v-throttle="
+            () => {
+              carSearch(), 3000;
+            }
+          "
           :disabled="allDetails.wholestateInfo.buttonEnable == 1"
           >正式评估</van-button
         >
-        <van-button type="info" size="small" @click="handleEvaluate()"
+        <van-button
+          type="info"
+          size="small"
+          v-throttle="
+            () => {
+              handleEvaluate(), 3000;
+            }
+          "
           >评估计算</van-button
         >
         <van-button type="info" size="small" @click="goAttachment()"
@@ -458,6 +473,7 @@
       label-width="100"
       :option="popOption"
       :showSearch.sync="showSearch"
+      :customized="customized"
       @fetchList="handleSerch"
     ></popSelectList>
     <!-- 时间选择 -->
@@ -482,6 +498,7 @@ import { Toast } from "vant";
 import api from "../api/index.js";
 import popSelectList from "@/components/popSelectList.vue";
 import { isEmpty, parseTime } from "@/utils/common.js";
+import "@/utils/throttle.js";
 export default {
   components: { popSelectList },
   data() {
@@ -508,6 +525,7 @@ export default {
       popSelectList: [],
       popOption: { label: "name", value: "value" },
       openFlag: 0, // 开窗类型 1申请车型  2使用性质  3省份，4城市 5产品开窗 6品牌 7系列 8车型
+      customized: false, // 是否自定义开窗选择器类型，目前只有申请车型时自定义
       // 申请车型开窗品牌，开窗系列，开窗系列选中的值
       currentCarInfo: {
         brand: "",
@@ -877,8 +895,17 @@ export default {
           .then((res) => {
             if (res.status == 1) {
               this.openFlag = 1;
+              this.customized = true;
               this.popSelectList = res.styles || [];
-              this.popOption = { label: "name", value: "id" };
+              // 拼接长名字 fullName
+              this.popSelectList.forEach((row) => {
+                if (row.modelName.indexOf(row.makeName)) {
+                  row.fullName = `${row.modelName} ${row.year}款 ${row.name}`;
+                } else {
+                  row.fullName = `${row.makeName} ${row.modelName} ${row.year}款 ${row.name}`;
+                }
+              });
+              this.popOption = { label: "fullName", value: "id" };
               this.isPopVisible = true;
             } else {
               Toast.fail(error_msg);
