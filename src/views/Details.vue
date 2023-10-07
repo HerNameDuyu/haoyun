@@ -12,15 +12,15 @@
           type="info"
           size="small"
           @click="evaluationSearch()"
-          :disabled="!isEmpty(allDetails.evaluateInfo.evaluateReportURL)"
+          :disabled="allDetails.evaluateInfo.buttonEnable == 1"
           >估值查询</van-button
         >
         <van-button
           type="info"
           size="small"
           @click="carSearch()"
-          :disabled="!isEmpty(allDetails.wholestateInfo.isAccidentCar)"
-          >车况查询</van-button
+          :disabled="allDetails.wholestateInfo.buttonEnable == 1"
+          >正式评估</van-button
         >
         <van-button type="info" size="small" @click="handleEvaluate()"
           >评估计算</van-button
@@ -36,140 +36,128 @@
         <div class="firstSection customerSection">
           <div class="secTitle">评估申请信息</div>
           <div v-if="Object.keys(allDetails.applyInfo).length > 0">
-            <div class="rowDetail">
-              <div class="rowTitle">贷款银行</div>
-              <div class="rowValue">
-                <input v-model="allDetails.applyInfo.bank" readonly disabled />
-              </div>
-            </div>
-            <div class="rowDetail">
-              <div class="rowTitle">评估渠道</div>
-              <div class="rowValue">
-                <input
-                  v-model="allDetails.applyInfo.channelName"
+            <van-form ref="formRef1">
+              <div class="rowDetail">
+                <van-field
+                  v-model="allDetails.applyInfo.bank"
+                  label="贷款银行："
                   readonly
                   disabled
+                  :label-width="100"
                 />
               </div>
-            </div>
-            <div class="rowDetail">
-              <div class="rowTitle">车架号</div>
-              <div class="rowValue">
-                <input v-model="allDetails.applyInfo.vinNo" readonly disabled />
-              </div>
-            </div>
-            <div class="rowDetail">
-              <div class="rowTitle">申请车型</div>
-              <div
-                class="rowValue"
-                @click="showToolTip(allDetails.applyInfo.applyModelName)"
-              >
-                <input
+              <div class="rowDetail">
+                <van-field
+                  v-model="allDetails.applyInfo.channelName"
+                  label="评估渠道："
                   readonly
+                  disabled
+                  :label-width="100"
+                />
+              </div>
+              <div class="rowDetail">
+                <van-field
+                  v-model="allDetails.applyInfo.vinNo"
+                  label="车架号："
+                  readonly
+                  disabled
+                  :label-width="100"
+                />
+              </div>
+              <div class="rowDetail">
+                <van-field
                   v-model="allDetails.applyInfo.applyModelName"
+                  label="申请车型："
+                  required
+                  readonly
+                  :disabled="allDetails.evaluateInfo.frameEnable == 1"
+                  :label-width="100"
+                  @focus="showToolTip(allDetails.applyInfo.applyModelName)"
                   @click="openApplyCar"
-                  :disabled="
-                    !isEmpty(allDetails.evaluateInfo.evaluateReportTime)
-                  "
+                  :rules="[{ required: true, message: '请输入申请车型' }]"
                 />
+                <!-- <div class="triangle"></div> -->
               </div>
-              <!-- <van-cell-group>
-              <van-field
-                readonly
-                is-link
-                v-model="allDetails.applyInfo.applyModelName"
-                label=""
-                @click="openApplyCar"
-              />
-            </van-cell-group> -->
-            </div>
-            <div class="rowDetail">
-              <div class="rowTitle">使用性质</div>
-              <div class="rowValue">
-                <input
-                  readonly
+              <div class="rowDetail">
+                <van-field
                   v-model="allDetails.applyInfo.carUseType"
+                  label="使用性质："
+                  readonly
+                  required
+                  :disabled="allDetails.evaluateInfo.frameEnable == 1"
+                  :label-width="100"
                   @click="openUseType"
-                  :disabled="
-                    !isEmpty(allDetails.evaluateInfo.evaluateReportTime)
-                  "
+                  :rules="[{ required: true, message: '请输入使用性质' }]"
                 />
               </div>
-            </div>
-            <div class="rowDetail">
-              <div class="rowTitle">所在省份</div>
-              <div class="rowValue">
-                <input
-                  readonly
+              <div class="rowDetail">
+                <van-field
                   v-model="allDetails.applyInfo.provinceName"
+                  label="所在省份："
+                  readonly
+                  required
+                  :disabled="allDetails.evaluateInfo.frameEnable == 1"
+                  :label-width="100"
                   @click="openArea(0)"
-                  :disabled="
-                    !isEmpty(allDetails.evaluateInfo.evaluateReportTime)
-                  "
+                  :rules="[{ required: true, message: '请输入所在省份' }]"
                 />
               </div>
-            </div>
-            <div class="rowDetail">
-              <div class="rowTitle">所在城市</div>
-              <div class="rowValue">
-                <input
-                  readonly
+              <div class="rowDetail">
+                <van-field
                   v-model="allDetails.applyInfo.cityName"
-                  @click="openArea(1)"
+                  label="所在城市："
+                  required
+                  readonly
                   :disabled="
                     isEmpty(allDetails.applyInfo.provinceName) ||
-                    !isEmpty(allDetails.evaluateInfo.evaluateReportTime)
+                    allDetails.evaluateInfo.frameEnable == 1
                   "
+                  :label-width="100"
+                  @click="openArea(1)"
+                  :rules="[{ required: true, message: '请输入所在城市' }]"
                 />
               </div>
-            </div>
-            <div class="rowDetail">
-              <div class="rowTitle">初次上牌日期</div>
-              <div class="rowValue">
-                <input
-                  readonly
+              <div class="rowDetail">
+                <van-field
                   v-model="allDetails.applyInfo.cardDate"
+                  label="初次上牌日期："
+                  required
+                  readonly
+                  :disabled="allDetails.evaluateInfo.frameEnable == 1"
+                  :label-width="100"
                   @click="openTime()"
-                  :disabled="
-                    !isEmpty(allDetails.evaluateInfo.evaluateReportTime)
-                  "
+                  :rules="[{ required: true, message: '请输入初次上牌日期' }]"
                 />
               </div>
-            </div>
-            <div class="rowDetail">
-              <div class="rowTitle">行驶里程</div>
-              <div class="rowValue">
-                <input
+              <div class="rowDetail">
+                <van-field
                   type="number"
+                  name="kms"
                   v-model="allDetails.applyInfo.kms"
-                  :disabled="
-                    !isEmpty(allDetails.evaluateInfo.evaluateReportTime)
-                  "
+                  label="行驶里程："
+                  required
+                  :disabled="allDetails.evaluateInfo.frameEnable == 1"
+                  :label-width="100"
+                  :rules="[{ required: true, message: '请输入行驶里程' }]"
                 />
               </div>
-            </div>
-            <div class="rowDetail">
-              <div class="rowTitle">原车主</div>
-              <div class="rowValue">
-                <input
+              <div class="rowDetail">
+                <van-field
                   v-model="allDetails.applyInfo.oldOwner"
-                  :disabled="
-                    !isEmpty(allDetails.evaluateInfo.evaluateReportTime)
-                  "
+                  label="原车主："
+                  :disabled="allDetails.evaluateInfo.frameEnable == 1"
+                  :label-width="100"
                 />
               </div>
-            </div>
-            <div class="rowDetail">
-              <div class="rowTitle">发动机号</div>
-              <div class="rowValue">
-                <input
+              <div class="rowDetail">
+                <van-field
                   v-model="allDetails.applyInfo.engineNo"
-                  :disabled="
-                    !isEmpty(allDetails.evaluateInfo.evaluateReportTime)
-                  "
+                  label="发动机号："
+                  :disabled="allDetails.evaluateInfo.frameEnable == 1"
+                  :label-width="100"
                 />
               </div>
-            </div>
+            </van-form>
           </div>
           <div v-else class="noContain">无</div>
         </div>
@@ -177,78 +165,82 @@
           <div class="secTitle">估值信息</div>
           <div v-if="Object.keys(allDetails.evaluateInfo).length > 0">
             <div class="rowDetail">
-              <div class="rowTitle">估值报告</div>
-              <div
-                class="rowValue"
-                @click="viewReport(allDetails.evaluateInfo.evaluateReportURL)"
-                style="color: #169bd5"
-              >
-                {{
-                  allDetails.evaluateInfo.evaluateReportURL ? "点击查看" : ""
-                }}
-              </div>
-            </div>
-            <div class="rowDetail">
-              <div class="rowTitle">评估结果时间</div>
-              <div class="rowValue">
-                <input
-                  v-model="allDetails.evaluateInfo.evaluateReportTime"
-                  disabled
-                />
-              </div>
-            </div>
-            <div class="rowDetail">
-              <div class="rowTitle">基准价</div>
-              <div class="rowValue">
-                <input
-                  v-model="allDetails.evaluateInfo.standardPrice"
-                  disabled
-                />
-              </div>
-            </div>
-            <div class="rowDetail">
-              <div class="rowTitle">品牌</div>
-              <div class="rowValue">
-                <input
-                  v-model="allDetails.evaluateInfo.resultBrandName"
-                  disabled
-                />
-              </div>
-            </div>
-            <div class="rowDetail">
-              <div class="rowTitle">车系</div>
-              <div class="rowValue">
-                <input
-                  v-model="allDetails.evaluateInfo.resultSeriesName"
-                  disabled
-                />
-              </div>
-            </div>
-            <div class="rowDetail">
-              <div class="rowTitle">车型</div>
-              <div
-                class="rowValue"
-                @click="showToolTip(allDetails.evaluateInfo.resultModelName)"
-              >
-                <input
-                  v-model="allDetails.evaluateInfo.resultModelName"
-                  disabled
-                />
-              </div>
-            </div>
-            <div class="rowDetail">
-              <div class="rowTitle">类型</div>
-              <div class="rowValue">
-                <input v-model="allDetails.evaluateInfo.carNature" disabled />
-              </div>
-            </div>
-            <div class="rowDetail">
-              <div class="rowTitle">新车指导价</div>
-              <div class="rowValue">
-                <input v-model="allDetails.evaluateInfo.guidePrice" disabled />
-              </div>
-            </div>
+              <!-- <div class="rowTitle">估值报告</div>
+                <div
+                  class="rowValue"
+                  @click="viewReport(allDetails.evaluateInfo.evaluateReportURL)"
+                  style="color: #169bd5"
+                >
+                  {{
+                    allDetails.evaluateInfo.evaluateReportURL ? "点击查看" : ""
+                  }}
+                </div> -->
 
+              <!-- <van-field
+                v-model="allDetails.evaluateInfo.evaluateReportURLText"
+                label="估值报告："
+                readonly
+                @click="viewReport(allDetails.evaluateInfo.evaluateReportURL)"
+                :label-width="100"
+              /> -->
+            </div>
+            <div class="rowDetail">
+              <van-field
+                v-model="allDetails.evaluateInfo.standardPrice"
+                label="基准价："
+                disabled
+                :label-width="100"
+              />
+            </div>
+            <div class="rowDetail">
+              <van-field
+                v-model="allDetails.evaluateInfo.resultBrandName"
+                label="品牌："
+                disabled
+                :label-width="100"
+              />
+            </div>
+            <div class="rowDetail">
+              <van-field
+                v-model="allDetails.evaluateInfo.resultSeriesName"
+                label="车系："
+                disabled
+                :label-width="100"
+              />
+            </div>
+            <div class="rowDetail">
+              <van-field
+                v-model="allDetails.evaluateInfo.resultModelName"
+                label="车型："
+                disabled
+                :label-width="100"
+                @focus="showToolTip(allDetails.evaluateInfo.resultModelName)"
+              />
+            </div>
+            <div class="rowDetail">
+              <van-field
+                v-model="allDetails.evaluateInfo.carNature"
+                label="类型："
+                disabled
+                :label-width="100"
+              />
+            </div>
+            <div class="rowDetail">
+              <van-field
+                v-model="allDetails.evaluateInfo.guidePrice"
+                label="新车指导价："
+                disabled
+                :label-width="100"
+              />
+            </div>
+            <div class="rowDetail">
+              <van-field
+                v-model="allDetails.evaluateInfo.evaluateReportTime"
+                label="查询结果时间："
+                disabled
+                :label-width="100"
+              />
+            </div>
             <!-- <div class="rowDetail">
             <div class="rowTitle">报告时间</div>
             <div
@@ -264,7 +256,7 @@
           <div class="secTitle">车况查询</div>
           <div v-if="Object.keys(allDetails.wholestateInfo).length > 0">
             <div class="rowDetail">
-              <div class="rowTitle">是否事故车</div>
+              <!-- <div class="rowTitle">是否事故车</div>
               <div
                 class="rowValue"
                 v-if="allDetails.wholestateInfo.isAccidentCar == '1'"
@@ -277,31 +269,32 @@
               >
                 否
               </div>
-              <div class="rowValue" v-else></div>
-            </div>
-
-            <!-- <div class="rowDetail">
-                  <div class="rowTitle">车况报告</div>
-                  <div class="rowValue" @click="viewReport(allDetails.wholestateInfo.report_url)" style="color:#169BD5">{{allDetails.wholestateInfo.report_url?'点击查看':''}}</div>
-              </div> -->
-
-            <div class="rowDetail">
-              <div class="rowTitle">事故描述</div>
-              <div class="rowValue">
-                <input
-                  v-model="allDetails.wholestateInfo.accidentReason"
-                  disabled
-                />
-              </div>
+              <div class="rowValue" v-else></div> -->
+              <van-field
+                v-model="allDetails.wholestateInfo.isAccidentCarText"
+                label="是否事故车："
+                readonly
+                disabled
+                :label-width="100"
+              />
             </div>
             <div class="rowDetail">
-              <div class="rowTitle">结果时间</div>
-              <div class="rowValue">
-                <input
-                  v-model="allDetails.wholestateInfo.generalReportTime"
-                  disabled
-                />
-              </div>
+              <van-field
+                v-model="allDetails.wholestateInfo.accidentReason"
+                label="事故描述："
+                readonly
+                disabled
+                :label-width="100"
+              />
+            </div>
+            <div class="rowDetail">
+              <van-field
+                v-model="allDetails.wholestateInfo.generalReportTime"
+                label="查询结果时间："
+                readonly
+                disabled
+                :label-width="100"
+              />
             </div>
           </div>
           <div v-else class="noContain">无</div>
@@ -309,61 +302,92 @@
         <div class="fourthSection customerSection">
           <div class="secTitle">评估计算</div>
           <div v-if="Object.keys(allDetails.calcInfo).length > 0">
-            <div class="rowDetail">
-              <div class="rowTitle">产品名称</div>
-              <div class="rowValue">
-                <input
+            <van-form ref="formRef4">
+              <div class="rowDetail">
+                <van-field
                   v-model="allDetails.calcInfo.productName"
+                  label="产品名称："
+                  required
                   readonly
                   @click="openProduct"
+                  :label-width="100"
+                  :rules="[{ required: true, message: '请输入产品名称' }]"
                 />
               </div>
-            </div>
-            <div class="rowDetail">
-              <div class="rowTitle">执行率费</div>
-              <div class="rowValue">
-                <input v-model="allDetails.calcInfo.execRate" />
+              <div class="rowDetail">
+                <van-field
+                  type="number"
+                  required
+                  v-model="allDetails.calcInfo.execRate"
+                  label="执行费率："
+                  :label-width="100"
+                  :rules="[{ required: true, message: '请输入执行费率' }]"
+                />
               </div>
-            </div>
-            <div class="rowDetail">
-              <div class="rowTitle">理论最高本金</div>
-              <div class="rowValue">
-                <input v-model="allDetails.calcInfo.highDebitAmt" disabled />
-              </div>
-            </div>
-            <div class="rowDetail">
-              <div class="rowTitle">车辆分期本金</div>
-              <div class="rowValue">
-                <input
-                  type="numner"
+              <div class="rowDetail">
+                <van-field
+                  type="number"
+                  required
                   v-model="allDetails.calcInfo.carDebitAmt"
+                  label="车辆分期本金："
+                  :label-width="100"
+                  :rules="[{ required: true, message: '请输入车辆分期本金' }]"
                 />
               </div>
-            </div>
-            <div class="rowDetail">
-              <div class="rowTitle">分期金额</div>
-              <div class="rowValue">
-                <input v-model="allDetails.calcInfo.signDebitAmt" disabled />
+              <div class="rowDetail">
+                <van-field
+                  v-model="allDetails.calcInfo.highDebitAmt"
+                  label="理论最高本金："
+                  :label-width="100"
+                  disabled
+                />
               </div>
-            </div>
-            <div class="rowDetail">
-              <div class="rowTitle">每月还款额</div>
-              <div class="rowValue">
-                <input v-model="allDetails.calcInfo.payPerMonth" disabled />
+              <div class="rowDetail">
+                <van-field
+                  type="number"
+                  v-model="allDetails.calcInfo.period"
+                  label="分期期数："
+                  :label-width="100"
+                  disabled
+                />
               </div>
-            </div>
-            <div class="rowDetail">
-              <div class="rowTitle">建议开票价</div>
-              <div class="rowValue">
-                <input v-model="allDetails.calcInfo.guidePrice" disabled />
+              <div class="rowDetail">
+                <van-field
+                  type="number"
+                  v-model="allDetails.calcInfo.signDebitAmt"
+                  disabled
+                  label="分期金额："
+                  :label-width="100"
+                />
               </div>
-            </div>
-            <div class="rowDetail">
-              <div class="rowTitle">分期首付款</div>
-              <div class="rowValue">
-                <input v-model="allDetails.calcInfo.signFirstPay" disabled />
+              <div class="rowDetail">
+                <van-field
+                  type="number"
+                  v-model="allDetails.calcInfo.payPerMonth"
+                  disabled
+                  label="每月还款额："
+                  :label-width="100"
+                />
               </div>
-            </div>
+              <div class="rowDetail">
+                <van-field
+                  type="number"
+                  v-model="allDetails.calcInfo.suggestPrice"
+                  disabled
+                  label="建议开票价："
+                  :label-width="100"
+                />
+              </div>
+              <div class="rowDetail">
+                <van-field
+                  type="number"
+                  v-model="allDetails.calcInfo.signFirstPay"
+                  disabled
+                  label="分期首付款："
+                  :label-width="100"
+                />
+              </div>
+            </van-form>
           </div>
           <div v-else class="noContain">无</div>
         </div>
@@ -433,6 +457,8 @@
       @confirm="handleWinConfirm"
       label-width="100"
       :option="popOption"
+      :showSearch.sync="showSearch"
+      @fetchList="handleSerch"
     ></popSelectList>
     <!-- 时间选择 -->
     <van-popup
@@ -443,6 +469,7 @@
       <van-datetime-picker
         v-model="currentDate"
         type="date"
+        :min-date="minDate"
         @change="changeFn()"
         @confirm="confirmFn()"
         @cancel="cancelFn()"
@@ -462,7 +489,10 @@ export default {
       showTimePop: false,
       currentDate: new Date(),
       allDetails: {
-        modelInfo: {},
+        applyInfo: {
+          kms: "",
+        },
+        calcInfo: {},
         evaluateInfo: {},
         wholestateInfo: {},
       },
@@ -485,11 +515,11 @@ export default {
         model: "",
       },
       billId: "",
+      showSearch: false, // 开窗是否显示搜索
+      minDate: new Date(2000, 0, 1),
     };
   },
-  created() {
-    this.getDetails();
-  },
+  created() {},
   mounted() {
     window.onresize = () => {
       return (() => {
@@ -511,36 +541,36 @@ export default {
         this.filesList = [];
       }
     },
+    $route: {
+      immediate: true,
+      handler(to, from) {
+        let query = {
+          vinNo:
+            this.$route.params.vinNo || window.localStorage.getItem("vinNo"),
+          bank: "", // 贷款银行
+          evaluateOrg: "", //评估渠道
+          brandDetailName: "",
+          oldOwner: "",
+          engineNo: "",
+          base64String: "",
+          cardDate: "",
+        };
+        let lastName = from?.name || "Entry";
+        // 如果是从首页进入该页面,重新获取页面数据
+        if (Object.keys(to.params).length !== 0 && lastName === "Entry") {
+          let params = this.$route.params;
+          if (params != undefined && Object.keys(params).length) {
+            query = Object.assign({}, query, params);
+          }
+          this.getDetails(query);
+        }
+      },
+    },
   },
   methods: {
     isEmpty,
     //获取详情
-    getDetails() {
-      let query = {
-        vinNo: "",
-        bank: "", // 贷款银行
-        evaluateOrg: "",
-        channelName: "", //评估渠道
-        // modelId: "", // 车型id
-        // modelName: "",
-        // seriesId: "",
-        // seriesName: "",
-        // brandId: "",
-        // brandName: "",
-        brandDetailName: "",
-        oldOwner: "",
-        engineNo: "",
-        base64String: "",
-      };
-      if (
-        this.$route.params != undefined &&
-        Object.keys(this.$route.params).length
-      ) {
-        query = Object.assign({}, query, this.$route.params);
-      } else {
-        this.$router.push("/");
-        return;
-      }
+    getDetails(query) {
       api
         .getEvaluateDetail(query)
         .then((res) => {
@@ -551,9 +581,24 @@ export default {
             this.allDetails.applyInfo.vinNo = query.vinNo;
             this.allDetails.applyInfo.bank = query.bank;
             this.allDetails.applyInfo.channelName = query.evaluateOrg;
+            // 初次上牌日期（日期转换 cardDate）
 
             this.allDetails.evaluateInfo = res.evaluateInfo; // 估值信息
+            this.allDetails.evaluateInfo.evaluateReportURLText = isEmpty(
+              this.allDetails.evaluateInfo.evaluateReportURL
+            )
+              ? ""
+              : "点击查看";
             this.allDetails.wholestateInfo = res.wholestateInfo; // 车况查询
+            // 是否车况查询
+            if (this.allDetails.wholestateInfo.isAccidentCar == "1") {
+              this.allDetails.wholestateInfo.isAccidentCarText = "是";
+            } else if (this.allDetails.wholestateInfo.isAccidentCar == "0") {
+              this.allDetails.wholestateInfo.isAccidentCarText = "否";
+            } else {
+              this.allDetails.wholestateInfo.isAccidentCarText = "";
+            }
+
             this.allDetails.calcInfo = res.calcInfo; // 评估计算
             this.billId = res.billId; // 单据id
           } else {
@@ -573,78 +618,124 @@ export default {
     },
     // 估值查询
     evaluationSearch() {
-      let query = {
-        billId: this.billId,
-        applyModelId: this.allDetails.applyInfo.applyModelId || "",
-        applyModelName: this.allDetails.applyInfo.applyModelName || "",
-        applySeriesId: this.allDetails.applyInfo.applySeriesId || "",
-        applySeriesName: this.allDetails.applyInfo.applySeriesName || "",
-        applyBrandId: this.allDetails.applyInfo.applyBrandId || "",
-        applyBrandName: this.allDetails.applyInfo.applyBrandName || "",
-        carUseType: this.allDetails.applyInfo.carUseType || "",
-        provinceName: this.allDetails.applyInfo.provinceName || "",
-        cityName: this.allDetails.applyInfo.cityName || "",
-        cardDate: this.allDetails.applyInfo.cardDate || "",
-        kms: this.allDetails.applyInfo.kms || "",
-        oldOwner: this.allDetails.applyInfo.oldOwner || "",
-        engineNo: this.allDetails.applyInfo.engineNo || "",
-      };
-      api
-        .carEvaluate(query)
-        .then((res) => {
-          if (res.status == 1) {
-            Toast.success("估值查询成功");
-            // 估值查询成功之后，重新获取当前详情页面
-            this.getDetails();
+      this.$refs.formRef1
+        .validate()
+        .then((valid) => {
+          let query = {
+            billId: this.billId,
+            applyModelId: this.allDetails.applyInfo.applyModelId || "",
+            applyModelName: this.allDetails.applyInfo.applyModelName || "",
+            applySeriesId: this.allDetails.applyInfo.applySeriesId || "",
+            applySeriesName: this.allDetails.applyInfo.applySeriesName || "",
+            applyBrandId: this.allDetails.applyInfo.applyBrandId || "",
+            applyBrandName: this.allDetails.applyInfo.applyBrandName || "",
+            carUseType: this.allDetails.applyInfo.carUseType || "",
+            provinceName: this.allDetails.applyInfo.provinceName || "",
+            cityName: this.allDetails.applyInfo.cityName || "",
+            cardDate: this.allDetails.applyInfo.cardDate || "",
+            kms: this.allDetails.applyInfo.kms || "",
+            oldOwner: this.allDetails.applyInfo.oldOwner || "",
+            engineNo: this.allDetails.applyInfo.engineNo || "",
+          };
+          if (+this.allDetails.applyInfo.kms < 50) {
+            return Toast.fail("公里数必须大于等于50公里！");
           }
+          api
+            .carEvaluate(query)
+            .then((res) => {
+              if (res.status == 1) {
+                Toast.success("估值查询成功");
+                // 估值查询成功之后，重新获取当前详情页面
+                let query = {
+                  vinNo:
+                    this.allDetails.applyInfo.vinNo ||
+                    this.$route.params.vinNo ||
+                    window.localStorage.getItem("vinNo"),
+                  bank: this.allDetails.applyInfo.bank || "", // 贷款银行
+                  evaluateOrg: this.allDetails.applyInfo.channelName || "", //评估渠道
+                  brandDetailName: this.$route.params.brandDetailName || "",
+                  oldOwner: this.allDetails.applyInfo.oldOwner || "",
+                  engineNo: this.allDetails.applyInfo.engineNo || "",
+                  base64String: this.$route.params.base64String || "",
+                  cardDate: this.allDetails.applyInfo.cardDate || "",
+                  applyModelId: this.allDetails.applyInfo.applyModelId || "",
+                };
+                this.getDetails(query);
+              }
+            })
+            .catch((err) => {});
         })
-        .catch((err) => {});
+        .catch((err) => {
+          console.log("校验错误结果", err);
+          Toast.fail(err[0].message || "请输入评估申请信息中的必填项");
+        });
     },
     // 评估计算
     handleEvaluate() {
+      this.$refs.formRef4
+        .validate()
+        .then((valid) => {
+          // 评估计算按钮，只有基准价字段有了才能点击，否则提示“请先进行估值查询！”
+          let query = {
+            billId: this.billId || "",
+            productName: this.allDetails.calcInfo.productName || "",
+            execRate: this.allDetails.calcInfo.execRate || "",
+            carDebitAmt: this.allDetails.calcInfo.carDebitAmt || "",
+          };
+          api
+            .evaluateCalc(query)
+            .then((res) => {
+              if (res.status == 1) {
+                Toast.success("评估计算成功");
+                // 理论最高本金
+                this.allDetails.calcInfo.highDebitAm = res.highDebitAmt;
+                // 分期金额
+                this.allDetails.calcInfo.signDebitAmt = res.signDebitAmt;
+                // 每月还款额
+                this.allDetails.calcInfo.payPerMonth = res.payPerMonth;
+                // 建议开票价
+                this.allDetails.calcInfo.suggestPrice = res.suggestPrice;
+                // 分期首付款
+                this.allDetails.calcInfo.signFirstPay = res.signFirstPay;
+                // 红线价格
+                this.allDetails.calcInfo.regLinePrice = res.regLinePrice;
+                // 如果评估计算出来后，建议开票价>红线价格，计算完毕后，需要弹框提示“建议开票价超限高，需降低分期金额！”
+                if (
+                  +this.allDetails.calcInfo.suggestPrice >
+                  +this.allDetails.calcInfo.regLinePrice
+                ) {
+                  Toast.fail("建议开票价超限高，需降低分期金额！");
+                  // 建议开票价，清空
+                  // this.allDetails.calcInfo.suggestPrice = "";
+                }
+                // 评估计算之后，重新获取当前详情页面
+                let query = {
+                  vinNo:
+                    this.allDetails.applyInfo.vinNo ||
+                    this.$route.params.vinNo ||
+                    window.localStorage.getItem("vinNo"),
+                  bank: this.allDetails.applyInfo.bank || "", // 贷款银行
+                  evaluateOrg: this.allDetails.applyInfo.channelName || "", //评估渠道
+                  brandDetailName: this.$route.params.brandDetailName || "",
+                  oldOwner: this.allDetails.applyInfo.oldOwner || "",
+                  engineNo: this.allDetails.applyInfo.engineNo || "",
+                  base64String: this.$route.params.base64String || "",
+                  cardDate: this.allDetails.applyInfo.cardDate || "",
+                  applyModelId: this.allDetails.applyInfo.applyModelId || "",
+                };
+                this.getDetails(query);
+              }
+            })
+            .catch((err) => {});
+        })
+        .catch((err) => {
+          console.log("校验错误结果", err);
+          Toast.fail(err[0].message || "请输入评估计算中的必填项");
+        });
       // if (isEmpty(this.allDetails.evaluateInfo.standardPrice)) {
       //   return Toast("请先进行估值查询！");
       // }
-      // 评估计算按钮，只有基准价字段有了才能点击，否则提示“请先进行估值查询！”
-      let query = {
-        billId: this.billId || "",
-        productName: this.allDetails.calcInfo.productName || "",
-        execRate: this.allDetails.calcInfo.execRate || "",
-        carDebitAmt: this.allDetails.calcInfo.carDebitAmt || "",
-      };
-      api
-        .evaluateCalc(query)
-        .then((res) => {
-          if (res.status == 1) {
-            Toast.success("评估计算成功");
-            // 理论最高本金
-            this.allDetails.calcInfo.highDebitAm = res.highDebitAmt;
-            // 分期金额
-            this.allDetails.calcInfo.signDebitAmt = res.signDebitAmt;
-            // 每月还款额
-            this.allDetails.calcInfo.payPerMonth = res.payPerMonth;
-            // 建议开票价
-            this.allDetails.calcInfo.guidePrice = res.suggestPrice;
-            // 分期首付款
-            this.allDetails.calcInfo.signFirstPay = res.signFirstPay;
-            // 红线价格
-            this.allDetails.calcInfo.regLinePrice = res.regLinePrice;
-            // 如果评估计算出来后，建议开票价>红线价格，计算完毕后，需要弹框提示“建议开票价超限高，需降低分期金额！”
-            if (
-              +this.allDetails.calcInfo.guidePrice >
-              +this.allDetails.calcInfo.regLinePrice
-            ) {
-              Toast.fail("建议开票价超限高，需降低分期金额！");
-              // 建议开票价，清空
-              this.allDetails.calcInfo.guidePrice = "";
-            }
-            console.log(
-              "===>>this.allDetails.calcInfo:",
-              this.allDetails.calcInfo
-            );
-          }
-        })
-        .catch((err) => {});
+
       // this.$router.replace({
       //   name: "Evaluate",
       //   params: formDatas,
@@ -661,17 +752,31 @@ export default {
     },
     // 车况查询
     carSearch() {
+      if (isEmpty(this.allDetails.calcInfo.suggestPrice)) {
+        return Toast.fail("建议开票价不能为空");
+      }
       let query = {
-        // vinNo: this.$route.params.vinNo || window.localStorage.getItem("vinNo"),
-        // brandName: this.allDetails.modelInfo.brand_name,
-        // seriesName: this.allDetails.modelInfo.series_name,
         billId: this.billId,
       };
       api.generalInfo(query).then((res) => {
         if (res.status == 1) {
-          Toast.success("车况查询成功");
+          Toast.success(res.note || "正式评估成功");
           // 车况查询成功之后，重新获取当前详情页面
-          this.getDetails();
+          let query = {
+            vinNo:
+              this.allDetails.applyInfo.vinNo ||
+              this.$route.params.vinNo ||
+              window.localStorage.getItem("vinNo"),
+            bank: this.allDetails.applyInfo.bank || "", // 贷款银行
+            evaluateOrg: this.allDetails.applyInfo.channelName || "", //评估渠道
+            brandDetailName: this.$route.params.brandDetailName || "",
+            oldOwner: this.allDetails.applyInfo.oldOwner || "",
+            engineNo: this.allDetails.applyInfo.engineNo || "",
+            base64String: this.$route.params.base64String || "",
+            cardDate: this.allDetails.applyInfo.cardDate || "",
+            applyModelId: this.allDetails.applyInfo.applyModelId || "",
+          };
+          this.getDetails(query);
         } else {
           Toast.fail(error_msg);
         }
@@ -688,7 +793,10 @@ export default {
     carReports() {
       this.filesData = new FormData();
       let query = {
-        vinNo: this.$route.params.vinNo || window.localStorage.getItem("vinNo"),
+        vinNo:
+          this.allDetails.applyInfo.vinNo ||
+          this.$route.params.vinNo ||
+          window.localStorage.getItem("vinNo"),
         reason: this.reportReason,
         userId: window.localStorage.getItem("vinUserId") || "",
       };
@@ -753,11 +861,16 @@ export default {
     },
     // 获取申请车型：开窗选择、必填、可编辑（选择业务系统车300车型库,精真估走VIN识别接口）
     openApplyCar() {
+      if (this.allDetails.evaluateInfo.frameEnable == 1) {
+        return;
+      }
       let channelName = this.$route.params.evaluateOrg;
-      console.log("ffffff---channelName", channelName);
       if (channelName == "预评估01") {
         let query = {
-          vin: this.$route.params.vinNo || window.localStorage.getItem("vinNo"),
+          vin:
+            this.allDetails.applyInfo.vinNo ||
+            this.$route.params.vinNo ||
+            window.localStorage.getItem("vinNo"),
         };
         api
           .getJZGVinMatch(query)
@@ -778,6 +891,9 @@ export default {
     },
     // 获取使用性质
     openUseType() {
+      if (this.allDetails.evaluateInfo.frameEnable == 1) {
+        return;
+      }
       api
         .getCarUseType()
         .then((res) => {
@@ -794,6 +910,9 @@ export default {
     },
     // 获取省份/城市
     openArea(ftype) {
+      if (this.allDetails.evaluateInfo.frameEnable == 1) {
+        return;
+      }
       // 类别，ftype=0，则获取省份；ftype=1则获取城市
       // 查询内容,获取城市的时候，如果传入浙江，则只返回浙江的城市
       if (ftype == 1 && isEmpty(this.allDetails.applyInfo.provinceName)) {
@@ -826,15 +945,21 @@ export default {
         .catch(() => {});
     },
     // 获取车辆品牌
-    async getCarBrand() {
-      let res = await api.getCarBrand().catch(() => {});
+    async getCarBrand(filter = "") {
+      let query = {
+        filter: filter,
+      };
+      let res = await api.getCarBrand(query).catch((err) => {
+        Toast.fail(err || "系统异常");
+      });
       if (res.status == 1) {
         this.openFlag = 6;
+        this.showSearch = true;
         this.popSelectList = res.brand_list || [];
         this.popOption = { label: "brand_name", value: "brand_id" };
         this.isPopVisible = true;
       } else {
-        Toast.fail(error_msg);
+        Toast.fail("系统异常");
       }
     },
     // 获取车辆系列
@@ -889,6 +1014,13 @@ export default {
         })
         .catch(() => {});
     },
+    // 开窗搜索
+    handleSerch(searchValue) {
+      // 品牌开窗
+      if (this.openFlag == 6) {
+        this.getCarBrand(searchValue);
+      }
+    },
     // 开窗点击确定
     handleWinConfirm(row) {
       // console.log("开窗点击确定", row);
@@ -903,14 +1035,17 @@ export default {
         let currentName = "";
         if (row.modelName.indexOf(row.makeName)) {
           console.log("包含");
-          currentName = row.modelName + row.year + "款" + row.name;
+          currentName = `${row.modelName} ${row.year}款 ${row.name}`;
         } else {
           console.log("没有包含");
-          currentName =
-            row.makeName + row.modelName + row.year + "款" + row.name;
+          currentName = `${row.makeName} ${row.modelName} ${row.year}款 ${row.name}`;
         }
         this.allDetails.applyInfo.applyModelName = currentName;
-        this.allDetails.applyInfo.applyModelId = row.modelId;
+        this.allDetails.applyInfo.applyModelId = row.id;
+        this.allDetails.applyInfo.applyBrandId = row.makeId;
+        this.allDetails.applyInfo.applyBrandName = row.makeName;
+        this.allDetails.applyInfo.applySeriesId = row.modelId;
+        this.allDetails.applyInfo.applySeriesName = row.modelName;
       }
       // 2使用性质
       if (this.openFlag == 2) {
@@ -928,6 +1063,7 @@ export default {
       // 5产品开窗
       if (this.openFlag == 5) {
         this.allDetails.calcInfo.productName = row.name;
+        this.allDetails.calcInfo.period = row.period;
       }
       // 6品牌
       if (this.openFlag == 6) {
@@ -972,6 +1108,9 @@ export default {
     },
     // 初次上牌日期
     openTime() {
+      if (this.allDetails.evaluateInfo.frameEnable == 1) {
+        return;
+      }
       this.showTimePop = true;
     },
     changeFn() {},
@@ -989,17 +1128,84 @@ export default {
 };
 </script>
 <style scoped lang="scss">
-input {
+.rowDetail::v-deep .van-field__value {
+  // border: 1px solid #ccc;
+  font-size: small;
   height: 0.8rem;
   line-height: 0.8rem;
-  padding-left: 0.2rem;
-  box-shadow: none; /*去除阴影*/
-  outline: none; /*聚焦input的蓝色边框*/
-  resize: none; /*textarea 禁止拖拽*/
-  border: 0.013333rem #a9a9a9 solid; /*去除边框*/
-  -webkit-appearance: none; /*常用于IOS下移除原生样式*/
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0); /*点击高亮的颜色*/
-  border-radius: 0.053333rem /* 4px -> .053333rem */;
+  // border: 1px #a9a9a9 solid; /*去除边框*/
+  margin-bottom: 4px;
+  input {
+    // height: 0.8rem;
+    // line-height: 0.8rem;
+    // margin: 0.05rem;
+    padding-left: 0.2rem;
+    box-shadow: none; /*去除阴影*/
+    outline: none; /*聚焦input的蓝色边框*/
+    resize: none; /*textarea 禁止拖拽*/
+    border: 1.5px #a9a9a9 solid; /*去除边框*/
+    -webkit-appearance: none; /*常用于IOS下移除原生样式*/
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0); /*点击高亮的颜色*/
+    border-radius: 0;
+  }
+}
+.rowDetail::v-deep .van-cell {
+  padding: 0rem 0.42667rem;
+  // display: flow-root;
+}
+.rowDetail::v-deep .van-field__label {
+  // background-color: #e2eaec;
+  // width: 30%;
+  // height: 100%;
+  // border-right: 0.0133rem solid #5e79a2;
+  padding-left: 0.133rem;
+  font-weight: bold;
+  font-size: smaller;
+  background-color: #e2eaec;
+  border-right: 0.0133rem solid #5e79a2;
+  // height: 0.8rem;
+  line-height: 0.8rem;
+}
+.rowDetail::v-deep .van-field--disabled .van-field__label {
+  color: #646566;
+}
+.rowDetail::v-deep .van-field__control:disabled {
+  background-color: rgba(0, 0, 0, 0.04);
+  color: #000;
+  opacity: 1;
+  -webkit-text-fill-color: #000; // ios 和 安卓9.0 必须添加此属性，才会生效
+  -webkit-opacity: 1;
+  // input{
+  //   border: 1px solid #DDD;
+  //   background-color: #F5F5F5;
+  //   color:#ACA899;
+  // }
+}
+// /deep/.van-field__control:disabled,
+//   /deep/.van-field__control[disabled] {
+//     color: #000;
+//     opacity: 1;
+//     -webkit-text-fill-color: #000; // ios 和 安卓9.0 必须添加此属性，才会生效
+//     -webkit-opacity: 1;
+//   }
+// 必填校验的*号
+::v-deep .van-cell--required {
+  &:before {
+    // content: "*";
+    top: 0.15rem;
+  }
+  // .van-cell__title.van-field__label {
+  //   span {
+  //     position: relative;
+  //     &:before {
+  //       position: absolute;
+  //       right: -8px;
+  //       color: red;
+  //       font-size: 14px;
+  //       content: "*";
+  //     }
+  //   }
+  // }
 }
 .confirmBox {
   height: 1.066667rem /* 80px -> 1.066667rem */;
@@ -1037,11 +1243,17 @@ input {
 .allSection {
   padding-top: 1.3rem;
   padding-bottom: 1.3rem;
-  overflow: scroll;
   height: 100%;
+  // overflow: scroll;
+  overflow-y: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+, edge */
+  &::-webkit-scrollbar {
+    display: none; /* Chrome Safari */
+  }
 }
 .customerSection {
-  border-bottom: 0.0133rem solid #5e79a2;
+  // border-bottom: 0.0133rem solid #5e79a2;
   // border-left: 0.0133rem solid #5e79a2;
   // border-right: 0.0133rem solid #5e79a2;
 }
@@ -1064,39 +1276,43 @@ input {
     font-size: 0.48rem;
     font-weight: bold;
     background-color: white;
-    border-bottom: 0.0133rem solid #5e79a2;
+    // border-bottom: 0.0133rem solid #5e79a2;
   }
   .noContain {
     width: 100%;
     height: 0.8rem;
     line-height: 0.8rem;
   }
-  .rowDetail {
-    width: 100%;
-    height: 0.8rem;
-    line-height: 0.8rem;
-    display: flex;
-    // border-bottom: 0.0133rem solid #5e79a2;
-    text-align: left;
-    .rowTitle {
-      background-color: #e2eaec;
-      width: 30%;
-      height: 100%;
-      border-right: 0.0133rem solid #5e79a2;
-      padding-left: 0.133rem;
-      font-weight: bold;
-    }
-    .rowValue {
-      flex: 1;
-      padding-left: 0.133rem;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      input {
-        width: 100%;
-      }
-    }
-  }
+  // .rowDetail {
+  //   width: 100%;
+  //   height: 0.8rem;
+  //   line-height: 0.8rem;
+  //   display: flex;
+  //   // border-bottom: 0.0133rem solid #5e79a2;
+  //   text-align: left;
+  //   .rowTitle {
+  //     background-color: #e2eaec;
+  //     width: 30%;
+  //     height: 100%;
+  //     border-right: 0.0133rem solid #5e79a2;
+  //     padding-left: 0.133rem;
+  //     font-weight: bold;
+  //   }
+  //   .rowValue {
+  //     flex: 1;
+  //     padding-left: 0.133rem;
+  //     overflow: hidden;
+  //     text-overflow: ellipsis;
+  //     white-space: nowrap;
+
+  //     border: 1px solid #ededed;
+  //     display: flex;
+  //     justify-content: center;
+  //     input {
+  //       width: 100%;
+  //     }
+  //   }
+  // }
 }
 .bottom-btn {
   background-color: #91c5c7;
@@ -1164,5 +1380,15 @@ input {
       }
     }
   }
+}
+.triangle {
+  width: 0;
+  height: 0;
+  border: 0.1rem /* 3px -> .04rem */ solid;
+  border-color: #000 transparent transparent;
+  position: absolute;
+  right: 0.16rem /* 5px -> .066667rem */;
+  top: 50%;
+  transform: translateY (-50%);
 }
 </style>

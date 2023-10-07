@@ -1,53 +1,59 @@
 <template>
-  <div id="app" :style="{'height':appHeight}">
-    <router-view />
+  <div id="app" :style="{ height: appHeight }">
+    <keep-alive>
+      <router-view v-if="$route.meta.keepAlive" />
+    </keep-alive>
+    <router-view v-if="!$route.meta.keepAlive" />
   </div>
 </template>
 <script>
 export default {
-  data(){
+  data() {
     return {
       docmHeight: document.documentElement.clientHeight,
       showHeight: document.documentElement.clientHeight,
       hideShow: true,
-      appHeight:'100%'
-    }
+      appHeight: "100%",
+    };
   },
   metaInfo: {
     meta: [
       { name: "apple-mobile-web-app-capable", content: "yes" },
-      { name: "viewport", content: "width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" },
+      {
+        name: "viewport",
+        content:
+          "width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no",
+      },
     ],
   },
-  created(){
+  created() {
     // console.log("APP创建啦！！！！！！！！！！！")
-    if(window.localStorage.getItem("vinNo")){
+    if (window.localStorage.getItem("vinNo")) {
       window.localStorage.removeItem("vinNo");
     }
   },
-  mounted(){
+  mounted() {
     window.onresize = () => {
-      return (
-        ()=>{
-          this.showHeight = document.body.clientHeight;
-        })()
-    }
+      return (() => {
+        this.showHeight = document.body.clientHeight;
+      })();
+    };
   },
-  beforeDestroy(){
+  beforeDestroy() {
     // console.log("APP要销毁啦！！");
-    window.localStorage.removeItem('vinUserId')
-    window.localStorage.removeItem('vinNo')
+    window.localStorage.removeItem("vinUserId");
+    window.localStorage.removeItem("vinNo");
   },
-  watch:{
-    showHeight:function(){
-      if(this.docmHeight > this.showHeight){
+  watch: {
+    showHeight: function () {
+      if (this.docmHeight > this.showHeight) {
         this.hideShow = false;
-      }else{
+      } else {
         this.hideShow = true;
       }
-    }
+    },
   },
-}
+};
 </script>
 <style lang="scss">
 #app {
