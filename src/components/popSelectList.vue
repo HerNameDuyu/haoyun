@@ -30,9 +30,64 @@
             :value-key="option.text"
             :columns="columnsData"
             close-icon="close"
+            :item-height="customizedHeight"
             @confirm="onConfirm"
             @cancel="onCancel"
-          />
+          >
+            <template #option="option">
+              <div
+                v-if="customized"
+                style="
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                  width: 100%;
+                "
+              >
+                <div class="rowInlineTitle">
+                  <span>{{ option.text }}</span>
+                </div>
+                <div class="rowInline">
+                  <div class="rowInline_l">
+                    <span class="rowInline_label">品牌：</span
+                    ><span class="rowInline_value">{{ option.makeName }}</span>
+                  </div>
+                  <div class="rowInline_l">
+                    <span class="rowInline_label">车型年款：</span
+                    ><span class="rowInline_value">{{ option.year }}年</span>
+                  </div>
+                </div>
+                <div class="rowInline">
+                  <div class="rowInline_l">
+                    <span class="rowInline_label">排量：</span
+                    ><span class="rowInline_value"
+                      >{{ option.displacement }}L</span
+                    >
+                  </div>
+                  <div class="rowInline_l">
+                    <span class="rowInline_label">变速方式：</span
+                    ><span class="rowInline_value">{{
+                      option.transmissionType
+                    }}</span>
+                  </div>
+                </div>
+                <div class="rowInline">
+                  <div class="rowInline_l">
+                    <span class="rowInline_label">国标：</span
+                    ><span class="rowInline_value">{{
+                      option.environmentProtectionStandard
+                    }}</span>
+                  </div>
+                  <div class="rowInline_l">
+                    <span class="rowInline_label">新车指导价：</span
+                    ><span class="rowInline_value"
+                      >{{ option.manufacturerGuidePrice }}万</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </template>
+          </van-picker>
         </div>
         <div class="noData" v-else>暂无信息</div>
       </van-popup>
@@ -108,8 +163,16 @@ export default {
       type: Boolean,
       default: false,
     },
+    customized: {
+      type: Boolean,
+      default: false,
+    },
   },
-  computed: {},
+  computed: {
+    customizedHeight() {
+      return this.customized ? "80px" : "44px";
+    },
+  },
   data() {
     return {
       show: false,
@@ -121,11 +184,11 @@ export default {
     onConfirm(val) {
       this.show = false;
       this.$emit("confirm", val);
-      this.$emit("update:showSearch",false);
+      this.$emit("update:showSearch", false);
     },
     onCancel() {
       this.show = false;
-      this.$emit("update:showSearch",false);
+      this.$emit("update:showSearch", false);
       // this.$emit("cancel", this.resultValue);
     },
     // toggle(index, item) {
@@ -250,6 +313,44 @@ export default {
     img {
       width: 100%;
       height: 100%;
+    }
+  }
+}
+.rowInlineTitle {
+  display: flex;
+  // justify-content: center;
+  margin-left: 20%;
+  align-items: center;
+  width: 80%;
+  font-size: 24px;
+  padding-bottom: 6px;
+  padding-top: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: bold;
+}
+.rowInline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 80%;
+  font-size: 24px;
+  .rowInline_l {
+    width: 50%;
+    // text-align: left;
+    display: flex;
+    span {
+      width: 50%;
+    }
+    .rowInline_label {
+      text-align: right;
+    }
+    .rowInline_value {
+      text-align: left;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 }
