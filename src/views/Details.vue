@@ -13,7 +13,7 @@
           size="small"
           v-throttle="
             () => {
-              evaluationSearch(), 3000;
+              evaluationSearch(), 1000;
             }
           "
           :disabled="allDetails.evaluateInfo.buttonEnable == 1"
@@ -24,7 +24,7 @@
           size="small"
           v-throttle="
             () => {
-              carSearch(), 3000;
+              carSearch(), 1000;
             }
           "
           :disabled="allDetails.wholestateInfo.buttonEnable == 1"
@@ -35,7 +35,7 @@
           size="small"
           v-throttle="
             () => {
-              handleEvaluate(), 3000;
+              handleEvaluate(), 1000;
             }
           "
           >评估计算</van-button
