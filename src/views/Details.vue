@@ -13,10 +13,10 @@
           size="small"
           v-throttle="
             () => {
-              evaluationSearch(), 1000;
+              evaluationSearch(), 2000;
             }
           "
-          :disabled="allDetails.evaluateInfo.buttonEnable == 1"
+          :disabled="btnLock1 || allDetails.evaluateInfo.buttonEnable == 1"
           >估值查询</van-button
         >
         <van-button
@@ -24,10 +24,10 @@
           size="small"
           v-throttle="
             () => {
-              carSearch(), 1000;
+              carSearch(), 2000;
             }
           "
-          :disabled="allDetails.wholestateInfo.buttonEnable == 1"
+          :disabled="btnLock2 || allDetails.wholestateInfo.buttonEnable == 1"
           >正式评估</van-button
         >
         <van-button
@@ -35,7 +35,7 @@
           size="small"
           v-throttle="
             () => {
-              handleEvaluate(), 1000;
+              handleEvaluate(), 2000;
             }
           "
           >评估计算</van-button
@@ -535,6 +535,8 @@ export default {
       billId: "",
       showSearch: false, // 开窗是否显示搜索
       minDate: new Date(2000, 0, 1),
+      btnLock1: false,
+      btnLock2: false,
     };
   },
   created() {},
@@ -622,9 +624,14 @@ export default {
           } else {
             Toast.fail(res.error_msg || "系统异常！");
           }
+
+          this.btnLock1 = false;
+          this.btnLock2 = false;
         })
         .catch(() => {
           this.loadingLock = true;
+          this.btnLock1 = false;
+          this.btnLock2 = false;
         });
     },
     onClickLeft() {
@@ -658,6 +665,7 @@ export default {
           if (+this.allDetails.applyInfo.kms < 50) {
             return Toast.fail("公里数必须大于等于50公里！");
           }
+          this.btnLock1 = true; // 估值查询按钮置灰
           api
             .carEvaluate(query)
             .then((res) => {
@@ -681,7 +689,9 @@ export default {
                 this.getDetails(query);
               }
             })
-            .catch((err) => {});
+            .catch((err) => {
+              this.btnLock1 = false;
+            });
         })
         .catch((err) => {
           console.log("校验错误结果", err);
@@ -773,6 +783,7 @@ export default {
       if (isEmpty(this.allDetails.calcInfo.suggestPrice)) {
         return Toast.fail("建议开票价不能为空");
       }
+      this.btnLock2 = true; // 正式评估按钮置灰
       let query = {
         billId: this.billId,
       };
@@ -797,6 +808,7 @@ export default {
           this.getDetails(query);
         } else {
           Toast.fail(error_msg);
+          this.btnLock2 = false;
         }
       });
     },

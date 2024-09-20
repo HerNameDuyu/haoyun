@@ -33,6 +33,7 @@
             :deletable="allowDelFlag == 1"
             :max-count="1"
             @delete="handleDelete"
+            :before-read="(file) => beforeRead(file, item)"
           >
           </van-uploader>
         </div>
@@ -80,6 +81,7 @@ export default {
       //   params: this.queryPostData,
       // });
     },
+
     // 查看评估附件
     async getFileInfo() {
       let tempRes = {
@@ -247,13 +249,20 @@ export default {
       }
     },
     // 附件上传之前处理
-    beforeRead() {
-      if (file.type !== "image/jpeg") {
-        Toast("请上传 jpg 格式图片");
+    beforeRead(file, item) {
+      // if (file.type !== "image/jpeg") {
+      //   Toast("请上传 jpg 格式图片");
+      //   return false;
+      // }
+      // 检查文件是否已存在于列表中
+      const exist = item.fileList.find((f) => f.file.name === file.name);
+      if (exist) {
+        // 文件已存在，阻止上传
+        Toast("文件已存在于列表中，不允许重复上传");
         return false;
       }
-
-      return false;
+      // 文件不存在，允许上传
+      return true;
     },
     // 附件上传处理
     async afterRead(files) {
@@ -282,7 +291,7 @@ export default {
         billId: this.billId,
         fileSmallClass: this.currentImg.fileSmallClass || "",
         userId: window.localStorage.getItem("vinUserId") || "",
-        fileName: baseImage,
+        fileName: fileName,
       };
       filesData.append("billId", query.billId);
       filesData.append("fileSmallClass", query.fileSmallClass);
@@ -290,7 +299,7 @@ export default {
       // 上传一张
       let conmpresedFile = this.toBlogToFile(baseImage);
       // files.file 无法压缩，转base64压缩后再转换为blob文件再转File文件
-      filesData.append(`${files.file.name}`, conmpresedFile);
+      filesData.append(`${fileName}`, conmpresedFile);
 
       api.uploadFileInfo(filesData).then((res) => {
         if (res.status == 1) {
